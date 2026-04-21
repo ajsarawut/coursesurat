@@ -2,12 +2,17 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#1a3a5c" />
   <title>ระบบออกแบบการจัดการเรียนการสอนรายวิชา | วพบ.สุราษฎร์ธานี</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
@@ -62,6 +67,7 @@
     .btn-header { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 6px 14px; font-family: 'Sarabun', sans-serif; font-size: 0.85rem; transition: all .2s; cursor: pointer; }
     .btn-header:hover { background: rgba(255,255,255,0.28); }
     .hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 6px; }
+    .btn-label-hide { display: inline; }
 
     /* ===== SIDEBAR ===== */
     .sidebar {
@@ -92,6 +98,7 @@
       flex-direction: column;
       min-height: calc(100vh - 68px);
     }
+    .sidebar { top: 68px; }
     .content-area { flex: 1; padding: 24px; }
     .page-section { display: none; }
     .page-section.active { display: block; }
@@ -245,20 +252,217 @@
     .tab-pane.active { display: block; }
 
     /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.open { display: block; }
-      .main-content { margin-left: 0; }
-      .app-footer { margin-left: 0; }
-      .hamburger { display: block; }
-      .header-brand .title-block h1 { font-size: 0.9rem; }
-      .content-area { padding: 14px; }
-      .stat-grid { grid-template-columns: repeat(2,1fr); }
-      .plo-grid { grid-template-columns: repeat(3, 1fr); }
+
+    /* =====================================================
+       RESPONSIVE — iPad (≤1024px) + Mobile (≤768px, ≤480px)
+       ===================================================== */
+
+    /* ── iPad landscape / small desktop (≤1024px) ── */
+    @media (max-width: 1024px) {
+      :root { --sidebar-w: 230px; }
+      .header-brand .title-block h1 { font-size: 0.95rem; }
+      .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .mko-stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .content-area { padding: 18px; }
     }
+
+    /* ── iPad portrait + tablet (≤768px) ── */
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 260px; }
+
+      /* Sidebar: slide in/out */
+      .sidebar { transform: translateX(-100%); box-shadow: none; }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.22); }
+      .sidebar-overlay.open { display: block; }
+      .main-content { margin-left: 0 !important; }
+      .app-footer { margin-left: 0 !important; }
+      .hamburger { display: block; }
+      .btn-label-hide { display: none; }
+
+      /* Header */
+      .header-brand .title-block small { display: none; }
+      .header-brand .title-block h1 { font-size: 0.88rem; }
+      .header-brand img { height: 38px; }
+      .btn-header span { display: none; }
+      .btn-header { padding: 7px 10px; }
+      .header-actions { gap: 5px; }
+
+      /* Content */
+      .content-area { padding: 14px; }
+      .page-title { font-size: 1.15rem; }
+      .page-subtitle { font-size: 0.82rem; }
+
+      /* Stat grids */
+      .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .mko-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+      /* PLO grid */
+      .plo-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .plo-item { padding: 8px 6px; }
+      .plo-label { font-size: 0.75rem; }
+      .plo-sub { font-size: 0.63rem; }
+
+      /* Tables: horizontal scroll with hint */
+      .table-container { -webkit-overflow-scrolling: touch; }
+      .table-container::after {
+        content: '← เลื่อนดูข้อมูล →';
+        display: block;
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        padding: 4px 0;
+        background: #f8fafc;
+      }
+      table.custom-table { font-size: 0.8rem; min-width: 600px; }
+      table.custom-table thead th { padding: 9px 10px; font-size: 0.78rem; }
+      table.custom-table td { padding: 8px 10px; }
+
+      /* Forms */
+      .form-label { font-size: 0.82rem; }
+      .form-control, .form-select { font-size: 0.85rem; padding: 7px 10px; }
+      .method-row { padding: 12px; }
+
+      /* Buttons */
+      .btn-primary-custom, .btn-success-custom, .btn-accent, .btn-outline-custom { padding: 9px 16px; font-size: 0.88rem; }
+      .btn-sm-action { padding: 6px 10px; }
+
+      /* Cards */
+      .card-header-custom { padding: 12px 16px; font-size: 0.9rem; }
+      .card-body-custom { padding: 14px; }
+
+      /* Drill modal */
+      .drill-backdrop { padding: 0; align-items: flex-end; }
+      .drill-modal {
+        max-width: 100%;
+        border-radius: 18px 18px 0 0;
+        max-height: 92vh;
+      }
+      .drill-mhead { border-radius: 18px 18px 0 0; padding: 14px 18px; }
+      .drill-mhead h5 { font-size: 0.95rem; }
+      .drill-mbody { padding: 14px 18px; }
+      .drill-mfoot { padding: 12px 18px; }
+
+      /* Detail grid in modal */
+      .detail-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Custom tabs: scrollable */
+      .custom-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 2px; scrollbar-width: none; }
+      .custom-tabs::-webkit-scrollbar { display: none; }
+      .tab-btn { white-space: nowrap; flex-shrink: 0; padding: 8px 14px; font-size: 0.82rem; }
+
+      /* มคอ. tabs */
+      #mkoTabs { overflow-x: auto; flex-wrap: nowrap; }
+
+      /* Info banner */
+      .info-banner { font-size: 0.82rem; padding: 10px 12px; }
+
+      /* Upload zone */
+      .upload-zone { padding: 20px 14px; }
+
+      /* Stat card */
+      .stat-card { padding: 14px 12px; gap: 10px; }
+      .stat-icon { width: 44px; height: 44px; font-size: 1.1rem; }
+      .stat-info h3 { font-size: 1.3rem; }
+      .stat-info p { font-size: 0.75rem; }
+      .stat-info small { font-size: 0.68rem; }
+
+      /* MKO stat */
+      .mko-stat { padding: 12px 10px; gap: 8px; }
+      .mko-stat-icon { width: 40px; height: 40px; font-size: 1rem; }
+      .mko-stat-info h3 { font-size: 1.3rem; }
+
+      /* Breadcrumb */
+      .breadcrumb-custom { font-size: 0.75rem; }
+
+      /* Footer */
+      .app-footer { font-size: 0.75rem; padding: 12px 14px; line-height: 1.6; }
+    }
+
+    /* ── Mobile (≤480px) ── */
     @media (max-width: 480px) {
-      .stat-grid { grid-template-columns: 1fr 1fr; }
+      /* Stat: 2 col */
+      .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .mko-stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+      /* PLO grid: 2 col */
+      .plo-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Header: compact */
+      .header-brand .title-block h1 { font-size: 0.8rem; }
+      .header-brand img { height: 32px; }
+      .app-header { padding: 0 10px; height: 60px; }
+      .main-content { margin-top: 60px !important; }
+
+      /* Tables: smaller font */
+      table.custom-table { font-size: 0.75rem; min-width: 520px; }
+      table.custom-table thead th { padding: 8px 8px; }
+      table.custom-table td { padding: 7px 8px; }
+
+      /* Detail grid 1-col */
+      .detail-grid { grid-template-columns: 1fr; }
+
+      /* Drill modal full height */
+      .drill-modal { max-height: 96vh; }
+      .drill-mhead h5 { font-size: 0.88rem; }
+
+      /* Form buttons: full width on mobile */
+      .d-flex.justify-content-end { flex-direction: column-reverse; }
+      .d-flex.justify-content-end button,
+      .d-flex.justify-content-end a { width: 100%; text-align: center; }
+
+      /* method-row buttons */
+      .method-row .d-flex { flex-wrap: wrap; }
+
+      /* Card header: stack if needed */
+      .card-header-custom.d-flex { flex-wrap: wrap; gap: 8px; }
+      .card-header-custom.d-flex .d-flex { flex-wrap: wrap; }
+
+      /* Badges: smaller */
+      .badge-year, .badge-sem, .badge-plo { font-size: 0.68rem; padding: 2px 7px; }
+      .mko-type { font-size: 0.68rem; padding: 2px 7px; }
+      .st-wait, .st-ok, .st-fix { font-size: 0.68rem; padding: 2px 7px; }
+
+      /* Year bar text */
+      .year-bar-row { padding: 6px; margin: -6px; }
+
+      /* Progress bars */
+      .mko-stat-info p { font-size: 0.72rem; }
+
+      /* Drill footer buttons stack */
+      .drill-mfoot { flex-direction: column-reverse; gap: 8px; }
+      .drill-mfoot button, .drill-mfoot a { width: 100%; text-align: center; justify-content: center; }
+
+      /* Search bar full width */
+      .search-bar input { width: 140px !important; }
+
+      /* Info banner: compact */
+      .info-banner { flex-direction: column; align-items: flex-start; gap: 6px; font-size: 0.8rem; }
+
+      /* Tab buttons: icon only on very small if needed */
+      .tab-btn { padding: 7px 10px; font-size: 0.78rem; }
+
+      .content-area { padding: 10px; }
+      .card-body-custom { padding: 12px; }
+      .card-header-custom { padding: 11px 13px; font-size: 0.85rem; }
+      .upload-zone { padding: 16px 10px; }
+      .upload-zone i { font-size: 1.5rem; }
+      .app-footer { font-size: 0.7rem; padding: 10px 12px; }
+    }
+
+    /* ── Touch device: larger tap targets ── */
+    @media (hover: none) and (pointer: coarse) {
+      .nav-item { padding: 13px 20px; }
+      .btn-sm-action { padding: 8px 12px; min-width: 36px; min-height: 36px; }
+      .btn-status { padding: 7px 12px; min-height: 36px; }
+      .btn-header { min-height: 36px; }
+      .plo-item { min-height: 64px; }
+      .stat-card, .mko-stat { min-height: 70px; }
+      .year-bar-row { min-height: 44px; }
+      .d-subj-row { padding: 14px; }
+      .d-inst-row { padding: 13px 14px; }
+      table.custom-table td { padding: 11px 10px; }
+      .form-control, .form-select { min-height: 44px; font-size: 16px !important; }
+      select.form-select { min-height: 44px; }
     }
 
     /* ===== SPINNER ===== */
@@ -369,6 +573,179 @@
     .btn-revise:hover  { background:#dc2626; color:#fff; }
     .btn-view-file { background:#e0e7ff; color:#3730a3; }
     .btn-view-file:hover { background:#4338ca; color:#fff; }
+
+    /* iOS tap highlight */
+    * { -webkit-tap-highlight-color: transparent; }
+    .stat-card:active, .mko-stat:active { transform: scale(0.97); }
+    .nav-item:active { background: rgba(255,255,255,0.14); }
+    .d-subj-row:active { background: #e8f0fe; }
+    .year-bar-row:active { background: #e8f0fe; }
+    .btn-primary-custom:active, .btn-success-custom:active, .btn-accent:active { opacity: 0.85; transform: scale(0.98); }
+
+    /* ── Responsive card-table (mobile only) ── */
+    @media (max-width: 480px) {
+      .resp-table-wrap table { min-width: unset !important; }
+      .resp-table-wrap thead { display: none; }
+      .resp-table-wrap tbody tr {
+        display: block;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(26,58,92,0.06);
+      }
+      .resp-table-wrap tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 4px;
+        border: none;
+        font-size: 0.82rem;
+        gap: 8px;
+      }
+      .resp-table-wrap tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        flex-shrink: 0;
+        min-width: 70px;
+      }
+      .resp-table-wrap tbody td:last-child {
+        justify-content: flex-end;
+        border-top: 1px solid var(--border);
+        margin-top: 4px;
+        padding-top: 8px;
+      }
+      .resp-table-wrap tbody td:first-child { display: none; }
+    }
+
+    /* ===== EXECUTIVE SUMMARY ===== */
+    .exec-header {
+      background: linear-gradient(135deg, #0f2942 0%, #1a3a5c 45%, #1e4976 100%);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+    }
+    .exec-header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(232,160,32,0.12);
+    }
+    .exec-header::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: 60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .exec-header-logo { height: 52px; border-radius: 8px; background: #fff; padding: 4px; margin-bottom: 14px; }
+    .exec-header h2 { font-family:'Kanit',sans-serif; font-size:1.35rem; font-weight:700; margin:0 0 4px; }
+    .exec-header p { font-size:0.85rem; opacity:0.8; margin:0; }
+    .exec-header .gen-time { font-size:0.75rem; opacity:0.65; margin-top:10px; }
+
+    /* Print button */
+    .btn-print { background:rgba(255,255,255,0.18); color:#fff; border:1.5px solid rgba(255,255,255,0.35); border-radius:10px; padding:8px 18px; font-family:'Sarabun',sans-serif; font-size:0.85rem; cursor:pointer; transition:all .2s; }
+    .btn-print:hover { background:rgba(255,255,255,0.3); }
+
+    /* KPI cards */
+    .exec-kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:20px; }
+    .exec-kpi {
+      background:#fff; border-radius:14px; padding:20px 18px;
+      box-shadow:0 3px 16px rgba(26,58,92,0.10); border:1px solid var(--border);
+      position:relative; overflow:hidden; transition:all .2s;
+    }
+    .exec-kpi:hover { box-shadow:0 6px 24px rgba(26,58,92,0.16); transform:translateY(-2px); }
+    .exec-kpi-stripe { position:absolute; top:0; left:0; right:0; height:4px; border-radius:14px 14px 0 0; }
+    .exec-kpi-icon { font-size:1.6rem; margin-bottom:8px; }
+    .exec-kpi-val { font-family:'Kanit',sans-serif; font-size:2.2rem; font-weight:800; line-height:1; margin-bottom:4px; }
+    .exec-kpi-label { font-size:0.78rem; color:var(--text-muted); }
+    .exec-kpi-sub { font-size:0.72rem; color:var(--text-muted); margin-top:4px; }
+    .exec-kpi-trend { display:inline-flex; align-items:center; gap:4px; font-size:0.72rem; font-weight:600; margin-top:6px; padding:2px 8px; border-radius:20px; }
+    .trend-up   { background:#dcfce7; color:#166534; }
+    .trend-warn { background:#fef3c7; color:#92400e; }
+    .trend-down { background:#fee2e2; color:#991b1b; }
+
+    /* Section title */
+    .exec-section-title {
+      font-family:'Kanit',sans-serif; font-size:1rem; font-weight:600;
+      color:var(--primary); margin:0 0 14px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .exec-section-title::after { content:''; flex:1; height:2px; background:linear-gradient(90deg,var(--border),transparent); }
+
+    /* Progress ring */
+    .ring-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .ring-label { font-size:0.78rem; color:var(--text-muted); margin-top:6px; text-align:center; }
+
+    /* PLO coverage bar */
+    .plo-cover-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .plo-cover-name { font-size:0.78rem; font-weight:600; color:var(--primary); min-width:48px; }
+    .plo-cover-bar-wrap { flex:1; background:var(--border); border-radius:6px; height:10px; overflow:hidden; }
+    .plo-cover-bar { height:100%; border-radius:6px; transition:width .6s; }
+    .plo-cover-count { font-size:0.75rem; color:var(--text-muted); min-width:52px; text-align:right; }
+
+    /* Instructor table */
+    .exec-inst-row { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--border); }
+    .exec-inst-row:last-child { border-bottom:none; }
+    .exec-inst-rank { font-family:'Kanit',sans-serif; font-size:1.1rem; font-weight:800; color:var(--primary-lighter); min-width:28px; }
+    .exec-inst-av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; color:#fff; flex-shrink:0; }
+    .exec-inst-name { flex:1; font-size:0.88rem; font-weight:600; }
+    .exec-inst-count { font-size:0.78rem; color:var(--text-muted); }
+
+    /* Gauge (mko completion) */
+    .exec-gauge-wrap { text-align:center; padding:10px 0; }
+    .exec-gauge-num { font-family:'Kanit',sans-serif; font-size:3rem; font-weight:800; line-height:1; }
+    .exec-gauge-denom { font-size:1rem; color:var(--text-muted); }
+    .exec-gauge-label { font-size:0.82rem; color:var(--text-muted); margin-top:4px; }
+
+    /* Alert highlight */
+    .exec-alert { border-radius:10px; padding:12px 16px; margin-bottom:10px; display:flex; gap:10px; align-items:flex-start; font-size:0.85rem; }
+    .exec-alert.red    { background:#fee2e2; border-left:4px solid #dc2626; color:#7f1d1d; }
+    .exec-alert.amber  { background:#fef3c7; border-left:4px solid #d97706; color:#78350f; }
+    .exec-alert.green  { background:#dcfce7; border-left:4px solid #16a34a; color:#14532d; }
+    .exec-alert.blue   { background:#dbeafe; border-left:4px solid #2563eb; color:#1e3a8a; }
+
+    /* Year donut chart */
+    .year-donut-wrap { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+
+    /* Completion table */
+    .comp-table td, .comp-table th { padding:8px 12px; font-size:0.82rem; }
+    .comp-meter { height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+    .comp-meter div { height:100%; border-radius:4px; }
+
+    @media print {
+      .app-header, .sidebar, .sidebar-overlay, .main-content > .app-footer,
+      .breadcrumb-custom, .page-subtitle, .btn-print,
+      #page-dashboard, #page-subjects, #page-add-subject, #page-clo-mapping,
+      #page-teaching-plan, #page-assessment, #page-reports, #page-heatmap,
+      #page-settings, #page-mko { display:none !important; }
+      .main-content { margin-left:0 !important; margin-top:0 !important; }
+      #page-executive { display:block !important; padding:0; }
+      .exec-header { border-radius:0; }
+      .card-box { box-shadow:none; border:1px solid #ccc; break-inside:avoid; }
+      body { background:#fff; }
+    }
+
+    @media (max-width:768px) {
+      .exec-kpi-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+      .exec-header { padding:20px 18px; }
+      .exec-header h2 { font-size:1.1rem; }
+      .exec-kpi-val { font-size:1.8rem; }
+      .plo-cover-name { min-width:40px; }
+    }
+    @media (max-width:480px) {
+      .exec-kpi-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
+      .exec-kpi { padding:14px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -399,8 +776,8 @@
       <span class="status-dot online" id="statusDot"></span>
       <span id="statusText" style="font-size:0.78rem;color:rgba(255,255,255,0.8);">พร้อมใช้งาน</span>
     </span>
-    <button class="btn-header" onclick="syncData()"><i class="fa fa-rotate-right me-1"></i>ซิงก์</button>
-    <button class="btn-header" onclick="exportReport()"><i class="fa fa-download me-1"></i>รายงาน</button>
+    <button class="btn-header" onclick="syncData()" title="ซิงก์ข้อมูล"><i class="fa fa-rotate-right me-1"></i><span class="btn-label-hide">ซิงก์</span></button>
+    <button class="btn-header" onclick="exportReport()" title="ส่งออกรายงาน"><i class="fa fa-download me-1"></i><span class="btn-label-hide">รายงาน</span></button>
   </div>
 </header>
 
@@ -435,6 +812,9 @@
     </button>
 
     <div class="nav-section-label">รายงาน</div>
+    <button class="nav-item" onclick="showPage('executive', this)">
+      <i class="fa fa-crown"></i> บทสรุปผู้บริหาร
+    </button>
     <button class="nav-item" onclick="showPage('reports', this)">
       <i class="fa fa-chart-bar"></i> สรุปผลและรายงาน
     </button>
@@ -490,7 +870,7 @@
       <div class="card-box">
         <div class="card-header-custom"><i class="fa fa-clock-rotate-left me-2"></i>รายวิชาที่บันทึกข้อมูลล่าสุด</div>
         <div class="card-body-custom p-0">
-          <div class="table-container">
+          <div class="table-container resp-table-wrap">
             <table class="custom-table" id="recentTable">
               <thead><tr><th>รหัส</th><th>ชื่อวิชา</th><th>ผู้รับผิดชอบ</th><th>ชั้นปี</th><th>ภาคเรียน</th><th>%CLO</th></tr></thead>
               <tbody id="recentTbody"><tr><td colspan="6" class="text-center py-4 text-muted">กำลังโหลด...</td></tr></tbody>
@@ -661,7 +1041,7 @@
           </div>
         </div>
 
-        <div class="d-flex gap-3 justify-content-end mt-2 mb-4">
+        <div class="d-flex gap-3 justify-content-end mt-2 mb-4 flex-wrap">
           <button type="button" class="btn-outline-custom" onclick="clearForm()"><i class="fa fa-rotate-left me-1"></i>ล้างข้อมูล</button>
           <button type="submit" class="btn-success-custom"><i class="fa fa-floppy-disk me-1"></i>บันทึกข้อมูล</button>
         </div>
@@ -786,7 +1166,7 @@
             <span style="font-size:0.8rem;"><span class="heat-3 px-2 py-1 rounded me-1">50-74%</span></span>
             <span style="font-size:0.8rem;"><span class="heat-4 px-2 py-1 rounded me-1">≥75%</span></span>
           </div>
-          <div class="table-container">
+          <div class="table-container resp-table-wrap">
             <table class="custom-table heatmap-table" id="heatmapTable">
               <thead><tr id="heatmapHeader"></tr></thead>
               <tbody id="heatmapBody"><tr><td colspan="12" class="text-center py-4 text-muted">กำลังโหลด...</td></tr></tbody>
@@ -801,6 +1181,61 @@
       <div class="breadcrumb-custom"><i class="fa fa-house me-1"></i> ตั้งค่า</div>
       <h2 class="page-title"><i class="fa fa-gear me-2 text-primary"></i>ตั้งค่าระบบ</h2>
       <p class="page-subtitle">จัดการการเชื่อมต่อและข้อมูลพื้นฐานของระบบ</p>
+
+      <!-- UPLOAD EXCEL CARD -->
+      <div class="card-box">
+        <div class="card-header-custom" style="background:linear-gradient(90deg,#065f46,#047857);">
+          <i class="fa fa-file-excel me-2"></i>นำเข้าข้อมูลจากไฟล์ Excel ต้นฉบับ
+        </div>
+        <div class="card-body-custom">
+          <div class="info-banner" style="background:linear-gradient(90deg,#d1fae5,#a7f3d0);color:#065f46;margin-bottom:16px;">
+            <i class="fa fa-circle-info fa-lg"></i>
+            อัปโหลดไฟล์ <strong>บันทึกรายละเอียดการออกแบบการจัดการเรียนการสอน.xlsx</strong>
+            เพื่อดึงข้อมูลวิชาทั้งหมดเข้าสู่ระบบอัตโนมัติ
+          </div>
+
+          <div class="upload-zone" id="xlsxUploadZone" onclick="document.getElementById('xlsxFile').click()"
+            ondragover="this.classList.add('dragover');event.preventDefault();"
+            ondragleave="this.classList.remove('dragover');"
+            ondrop="handleXlsxDrop(event)">
+            <i class="fa fa-file-excel" style="color:#16a34a;"></i>
+            <p>คลิกเพื่อเลือกไฟล์ หรือลากไฟล์ .xlsx มาวางที่นี่</p>
+            <div class="file-chosen" id="xlsxFileChosen"></div>
+          </div>
+          <input type="file" id="xlsxFile" accept=".xlsx,.xls" style="display:none;" onchange="onXlsxSelect(this)" />
+
+          <div id="xlsxPreview" style="display:none; margin-top:16px;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong style="font-size:0.9rem;color:var(--success);"><i class="fa fa-table me-1"></i>ตัวอย่างข้อมูลที่จะนำเข้า</strong>
+              <span id="xlsxCount" class="badge-plo"></span>
+            </div>
+            <div class="table-container resp-table-wrap" style="max-height:300px;overflow-y:auto;">
+              <table class="custom-table" id="xlsxPreviewTable">
+                <thead><tr><th>ชั้นปี</th><th>ภาค</th><th>รหัส</th><th>ชื่อวิชา</th><th>หน่วยกิต</th><th>ทบ.</th><th>ทล.</th><th>ป.</th><th>SS</th><th>ผู้รับผิดชอบ</th></tr></thead>
+                <tbody id="xlsxPreviewTbody"></tbody>
+              </table>
+            </div>
+            <div class="d-flex gap-3 mt-3 flex-wrap">
+              <button class="btn-success-custom" onclick="importXlsxData()">
+                <i class="fa fa-database me-1"></i>นำเข้าสู่ระบบ (<span id="xlsxImportCount">0</span> วิชา)
+              </button>
+              <button class="btn-outline-custom" onclick="resetXlsxUpload()">
+                <i class="fa fa-rotate-left me-1"></i>ยกเลิก
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-3 p-3" style="background:#f0fdf4;border-radius:10px;border:1.5px solid #bbf7d0;">
+            <div style="font-size:0.82rem;font-weight:600;color:#065f46;margin-bottom:8px;"><i class="fa fa-circle-info me-1"></i>คอลัมน์ที่ระบบอ่านจากไฟล์ Excel</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span class="badge-plo">No</span><span class="badge-plo">ชั้น ปี</span><span class="badge-plo">ภาค เรียน</span><span class="badge-plo">รหัส</span><span class="badge-plo">ชื่อวิชา</span><span class="badge-plo">หน่วยกิต</span><span class="badge-plo">ทบ.</span><span class="badge-plo">ทล.</span><span class="badge-plo">ป.</span><span class="badge-plo">SS</span><span class="badge-plo">ผู้รับผิดชอบ</span>
+            </div>
+            <div style="font-size:0.78rem;color:#047857;margin-top:8px;">
+              <i class="fa fa-check me-1"></i>ระบบจะข้ามแถวส่วนหัว, แถวตัวอย่าง และแถวรวม โดยอัตโนมัติ
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="card-box">
         <div class="card-header-custom"><i class="fa fa-database me-2"></i>การเชื่อมต่อฐานข้อมูล</div>
@@ -822,6 +1257,7 @@
             <div class="col-12">
               <button class="btn-primary-custom" onclick="testConnection()"><i class="fa fa-plug me-2"></i>ทดสอบการเชื่อมต่อ</button>
               <button class="btn-accent ms-2" onclick="initDatabase()"><i class="fa fa-database me-2"></i>สร้างฐานข้อมูล</button>
+              <button class="btn-success-custom ms-2" onclick="seedToSheets()"><i class="fa fa-seedling me-2"></i>โหลด Seed Data (47 วิชา)</button>
             </div>
           </div>
         </div>
@@ -1034,7 +1470,7 @@
             </div>
           </div>
           <div class="card-body-custom p-0">
-            <div class="table-container">
+            <div class="table-container resp-table-wrap">
               <table class="custom-table">
                 <thead>
                   <tr><th>#</th><th>ประเภท</th><th>รหัส/ชื่อวิชา</th><th>ผู้สอน</th><th>ภาค/ปี</th><th>วันที่ส่ง</th><th>สถานะ</th><th>ไฟล์</th><th>จัดการ</th></tr>
@@ -1064,6 +1500,172 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- ===== EXECUTIVE SUMMARY ===== -->
+    <section class="page-section" id="page-executive">
+
+      <!-- Hero Header -->
+      <div class="exec-header">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div>
+            <img src="https://img2.pic.in.th/pic/logo-17c90f55a924f4f2.png" class="exec-header-logo" alt="logo" onerror="this.style.display='none'" />
+            <h2><i class="fa fa-crown me-2" style="color:var(--accent-light);"></i>บทสรุปสำหรับผู้บริหาร</h2>
+            <p>ระบบออกแบบการจัดการเรียนการสอนรายวิชา | วิทยาลัยพยาบาลบรมราชชนนี สุราษฎร์ธานี</p>
+            <div class="gen-time" id="execGenTime"></div>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn-print" onclick="window.print()"><i class="fa fa-print me-1"></i>พิมพ์ / PDF</button>
+            <button class="btn-print" onclick="renderExecutive()"><i class="fa fa-rotate-right me-1"></i>รีเฟรช</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Row -->
+      <div class="exec-kpi-grid" id="execKpiGrid">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Row 1: Completion + PLO Coverage -->
+      <div class="row g-3 mb-3">
+
+        <!-- Data Completion Gauge -->
+        <div class="col-12 col-md-4">
+          <div class="card-box h-100">
+            <div class="card-header-custom"><i class="fa fa-gauge-high me-2"></i>ความสมบูรณ์ข้อมูล</div>
+            <div class="card-body-custom">
+              <div class="exec-gauge-wrap">
+                <svg width="160" height="160" viewBox="0 0 160 160" id="execGaugeSvg">
+                  <circle cx="80" cy="80" r="65" fill="none" stroke="#e2e8f0" stroke-width="14"/>
+                  <circle cx="80" cy="80" r="65" fill="none" stroke="url(#gaugeGrad)" stroke-width="14"
+                    stroke-linecap="round" stroke-dasharray="408.41" stroke-dashoffset="408.41"
+                    transform="rotate(-90 80 80)" id="execGaugeArc" style="transition:stroke-dashoffset .8s ease;"/>
+                  <defs>
+                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#2563a8"/>
+                      <stop offset="100%" style="stop-color:#e8a020"/>
+                    </linearGradient>
+                  </defs>
+                  <text x="80" y="74" text-anchor="middle" font-family="Kanit,sans-serif" font-size="28" font-weight="800" fill="#1a3a5c" id="execGaugePct">0%</text>
+                  <text x="80" y="94" text-anchor="middle" font-family="Sarabun,sans-serif" font-size="11" fill="#64748b" id="execGaugeSub">วิชา</text>
+                </svg>
+              </div>
+              <div id="execCompDetail" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLO Coverage Bar Chart -->
+        <div class="col-12 col-md-8">
+          <div class="card-box h-100">
+            <div class="card-header-custom"><i class="fa fa-bullseye me-2"></i>ความครอบคลุม PLO (จำนวนวิชาที่ Mapping)</div>
+            <div class="card-body-custom" id="execPloCoverage">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Year breakdown + Method distribution -->
+      <div class="row g-3 mb-3">
+
+        <!-- Subject by Year/Semester -->
+        <div class="col-12 col-md-5">
+          <div class="card-box h-100">
+            <div class="card-header-custom"><i class="fa fa-graduation-cap me-2"></i>รายวิชาแยกตามชั้นปีและภาคเรียน</div>
+            <div class="card-body-custom p-0">
+              <div class="table-container">
+                <table class="custom-table comp-table" id="execYearTable">
+                  <thead><tr><th>ชั้นปี</th><th>ภาค 1</th><th>ภาค 2</th><th>ฤดูร้อน</th><th>รวม</th><th>มีข้อมูล</th></tr></thead>
+                  <tbody id="execYearTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Learning Methods -->
+        <div class="col-12 col-md-7">
+          <div class="card-box h-100">
+            <div class="card-header-custom"><i class="fa fa-chalkboard-teacher me-2"></i>วิธีการจัดการเรียนการสอนที่ใช้</div>
+            <div class="card-body-custom" id="execMethods">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Instructor workload + มคอ. status -->
+      <div class="row g-3 mb-3">
+
+        <!-- Instructor Table -->
+        <div class="col-12 col-md-5">
+          <div class="card-box h-100">
+            <div class="card-header-custom"><i class="fa fa-users me-2"></i>ภาระงานอาจารย์ผู้รับผิดชอบ</div>
+            <div class="card-body-custom" id="execInstructors">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- มคอ. Status Summary -->
+        <div class="col-12 col-md-7">
+          <div class="card-box h-100">
+            <div class="card-header-custom"><i class="fa fa-file-circle-check me-2"></i>สถานะการส่ง มคอ.</div>
+            <div class="card-body-custom">
+              <div class="row g-2 mb-3" id="execMkoKpi"></div>
+              <div id="execMkoTypeBreakdown"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Alerts + Recommendations -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-6">
+          <div class="card-box h-100">
+            <div class="card-header-custom" style="background:linear-gradient(90deg,#7f1d1d,#dc2626);"><i class="fa fa-triangle-exclamation me-2"></i>รายการที่ต้องดำเนินการ</div>
+            <div class="card-body-custom" id="execAlerts">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="card-box h-100">
+            <div class="card-header-custom" style="background:linear-gradient(90deg,#065f46,#047857);"><i class="fa fa-lightbulb me-2"></i>ข้อสังเกตและข้อเสนอแนะ</div>
+            <div class="card-body-custom" id="execRecommend">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5: CLO Weight Summary per Year -->
+      <div class="card-box mb-3">
+        <div class="card-header-custom"><i class="fa fa-weight-hanging me-2"></i>สรุปน้ำหนัก CLO-PLO รายวิชา (เรียงตามชั้นปี)</div>
+        <div class="card-body-custom p-0">
+          <div class="table-container resp-table-wrap">
+            <table class="custom-table" style="font-size:0.78rem;" id="execCloTable">
+              <thead>
+                <tr>
+                  <th>ชั้นปี/ภาค</th><th>รหัส</th><th>ชื่อวิชา</th><th>ผู้รับผิดชอบ</th>
+                  <th>PLO1</th><th>PLO2</th><th>PLO3</th><th>PLO4</th><th>PLO5</th>
+                  <th>PLO6</th><th>PLO7</th><th>PLO8</th><th>PLO9</th><th>PLO10</th>
+                  <th>รวม%</th><th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody id="execCloTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer note -->
+      <div style="text-align:center;font-size:0.78rem;color:var(--text-muted);padding:16px 0 8px;">
+        รายงานนี้สร้างโดยอัตโนมัติจากระบบออกแบบการจัดการเรียนการสอนรายวิชา |
+        วิทยาลัยพยาบาลบรมราชชนนี สุราษฎร์ธานี |
+        ออกแบบโดย ผศ.ศราวุธ เรืองสวัสดิ์
+      </div>
     </section>
   </div><!-- /content-area -->
 
@@ -1096,6 +1698,11 @@
 // CONFIGURATION
 // ===========================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJPxT60Q37l7222KZXxTbhw_y5UEIoEwd2LoqQDPP-tWxLnd8izHFae7x7KTuKfMQC0w/exec';
+
+// ===========================
+// SEED DATA (จากไฟล์ต้นฉบับ)
+// ===========================
+const SEED_SUBJECTS = [{"id": "seed_1_GE101", "no": 1, "year": "1", "semester": "1", "code": "GE 101", "name": "ภาษาไทยเชิงวิชาการ", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.สุธาสีนี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_2_GE209", "no": 2, "year": "1", "semester": "1", "code": "GE 209", "name": "พลเมืองวิวัฒน์", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.สุธิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_3_GE302", "no": 3, "year": "1", "semester": "1", "code": "GE 302", "name": "การรู้ดิจิทัล", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "ผศ.ศราวุธ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_4_GE301", "no": 4, "year": "1", "semester": "1", "code": "GE 301", "name": "ผู้ประกอบการในยุคดิจิทัล", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.จิราพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_5_0114300102", "no": 5, "year": "1", "semester": "1", "code": "0114300102", "name": "กายวิภาคศาสตร์และสรีรวิทยา", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "ผศ.ดร.ฐิตาพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_6_0114300035", "no": 6, "year": "1", "semester": "1", "code": "0114300035", "name": "วิชาเลือกเสรี 1: การพัฒนาบุคลิกภาพและวุฒิภาวะทางอารมณ์", "credits": "2(2-0-4)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.อุมาพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_7_GE103", "no": 7, "year": "2", "semester": "1", "code": "GE 103", "name": "ภาษาอังกฤษเชิงวิชาการ", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "ผศ.ดร.ดาราวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_8_0114300205", "no": 8, "year": "2", "semester": "1", "code": "0114300205", "name": "เภสัชวิทยา", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 30, "instructor": "อ.เสาวลักษณ์/ อ.ณชา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_9_0114300206", "no": 9, "year": "2", "semester": "1", "code": "0114300206", "name": "พยาธิสรีรวิทยา", "credits": "3 (3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 45, "instructor": "อ.ลัดดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_10_0114300207", "no": 10, "year": "2", "semester": "1", "code": "0114300207", "name": "กฎหมาย จริยศาสตร์และจรรยาบรรณวิชาชีพการพยาบาล", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 30, "instructor": "อ.วีรวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_11_0114300208", "no": 11, "year": "2", "semester": "1", "code": "0114300208", "name": "มโนมติ ทฤษฎี และกระบวนการพยาบาล", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ปนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_12_0114300209", "no": 12, "year": "2", "semester": "1", "code": "0114300209", "name": "การพยาบาลขั้นพื้นฐาน", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.ณชา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_13_0114300036", "no": 13, "year": "2", "semester": "1", "code": "0114300036", "name": "วิชาเลือกเสรี 2: พืชสมุนไพร", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 30, "instructor": "อ.ชุลีพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_14_0114300313", "no": 14, "year": "3", "semester": "1", "code": "0114300313", "name": "การพยาบาลสุขภาพชุมชน", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ปิยรัตน์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_15_0114300314", "no": 15, "year": "3", "semester": "1", "code": "0114300314", "name": "การพยาบาลผู้ใหญ่และผู้สูงอายุ 2", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.เนตรนภา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_16_0114300315", "no": 16, "year": "3", "semester": "1", "code": "0114300315", "name": "วิจัยและนวัตกรรมทางการพยาบาล", "credits": "3 (1-4-4)", "lecture": 15, "lab": 60, "practice": 0, "ss": 75, "instructor": "ผศ.ดร.รุ่งนภา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_17_0114300316", "no": 17, "year": "3", "semester": "1", "code": "0114300316", "name": "การพยาบาลมารดา ทารกฯ 1", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.ลลิตวดี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_18_0114300317", "no": 18, "year": "3", "semester": "1", "code": "0114300317", "name": "การพยาบาลสุขภาพจิตและจิตเวช", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.ผกาสรณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_19_0114300038", "no": 19, "year": "3", "semester": "1", "code": "0114300038", "name": "วิชาเลือกเสรี 3: ศึกษาอิสระ", "credits": "2 (0-4-2)", "lecture": 0, "lab": 60, "practice": 0, "ss": 60, "instructor": "ผศ.วัจมัย", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_20_0114300325", "no": 20, "year": "3", "semester": "1", "code": "0114300325", "name": "ปฏิบัติการพยาบาลเด็กและวัยรุ่น 2", "credits": "2 (0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.รัชฎาภรณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_21_0114300330", "no": 21, "year": "3", "semester": "1", "code": "0114300330", "name": "ปฏิบัติการพยาบาลผู้สูงอายุ", "credits": "2 (0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.ฉันทนา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_22_GE105", "no": 22, "year": "4", "semester": "1", "code": "GE 105", "name": "ภาษาอังกฤษก้าวหน้า", "credits": "3(2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.รพีพรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_23_0114300418", "no": 23, "year": "4", "semester": "1", "code": "0114300418", "name": "การพยาบาลมารดา ทารก ฯ 2", "credits": "3(3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 45, "instructor": "อ.ดร.พนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_24_0114300419", "no": 24, "year": "4", "semester": "1", "code": "0114300419", "name": "การพยาบาลและการบริหารจัดการสุขภาวะชุมชน", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.โศรตรีย์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_25_0114300420", "no": 25, "year": "4", "semester": "1", "code": "0114300420", "name": "การรักษาโรคเบื้องต้นสำหรับพยาบาล", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.สุธาสินี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_26_0114300421", "no": 26, "year": "4", "semester": "1", "code": "0114300421", "name": "การบริหารและการจัดการคุณภาพทางการพยาบาล", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "ผศ.วรรณดี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_28_GE102", "no": 28, "year": "1", "semester": "2", "code": "GE 102", "name": "ภาษาอังกฤษเพื่อการสื่อสาร", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "อ.ดร.รวิวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_28_GE201", "no": 28, "year": "1", "semester": "2", "code": "GE 201", "name": "เราคือ สบช.", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "ผศ.ดร.มัฏฐวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_29_GE305", "no": 29, "year": "1", "semester": "2", "code": "GE 305", "name": "วิทยาศาสตร์และคณิตศาสตร์ในชีวิตประจำวัน", "credits": "3 (3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 90, "instructor": "อ.อำนวย", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_30_0114300101", "no": 30, "year": "1", "semester": "2", "code": "0114300101", "name": "จุลชีววิทยาและปรสิตวิทยา", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 60, "instructor": "อ.ผกาสรณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_31_0114300103", "no": 31, "year": "1", "semester": "2", "code": "0114300103", "name": "ชีวเคมีและโภชนศาสตร์", "credits": "3 (3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 90, "instructor": "อ.ธนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_32_0114300104", "no": 32, "year": "1", "semester": "2", "code": "0114300104", "name": "จิตวิทยาพัฒนาการและกระบวนการคิด", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ญาณิศา/ อ.นุจเรศ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_33_GE104", "no": 33, "year": "2", "semester": "2", "code": "GE 104", "name": "ภาษาอังกฤษเพื่อการอ่านและการเขียนเชิงวิชาการ", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "อ.ขวัญตา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_34_0114300210", "no": 34, "year": "2", "semester": "2", "code": "0114300210", "name": "การพยาบาลผู้ใหญ่และผู้สูงอายุ 1", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "ผศ.ดร.ดาราวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_35_0114300211", "no": 35, "year": "2", "semester": "2", "code": "0114300211", "name": "การพยาบาลผู้สูงอายุ", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ดร.จีราพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_36_0114300212", "no": 36, "year": "2", "semester": "2", "code": "0114300212", "name": "การพยาบาลเด็กและวัยรุ่น", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "อ.ดร.กิจติยา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_37_114300222.0", "no": 37, "year": "2", "semester": "2", "code": "114300222.0", "name": "ปฏิบัติการพยาบาลขั้นพื้นฐาน", "credits": "4 (0-12-4)", "lecture": 0, "lab": 0, "practice": 180, "ss": 60, "instructor": "อ.กฤติยา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_38_0114300327", "no": 38, "year": "3", "semester": "2", "code": "0114300327", "name": "ปฏิบัติการพยาบาลผู้ใหญ่และผู้สูงอายุ 2", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.วรินทร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_39_0114300326", "no": 39, "year": "3", "semester": "2", "code": "0114300326", "name": "ปฏิบัติการพยาบาลสุขภาพชุมชน", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ดร.รสติกร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_40_0114300431", "no": 40, "year": "4", "semester": "2", "code": "0114300431", "name": "ปฏิบัติการพยาบาลมารดา ทารก ฯ 2", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.นุจเรศ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_41_0114300432", "no": 41, "year": "4", "semester": "2", "code": "0114300432", "name": "ปฏิบัติการพยาบาลและการบริหารจัดการสุขภาวะชุมชน", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ชุลีพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_42_0114300433", "no": 42, "year": "4", "semester": "2", "code": "0114300433", "name": "ปฏิบัติการรักษาโรคเบื้องต้นสำหรับพยาบาล", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ปิยะดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_43_0114300434", "no": 43, "year": "4", "semester": "2", "code": "0114300434", "name": "ปฏิบัติการบริหารและการจัดการคุณภาพทางการพยาบาล", "credits": "2 (0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.ณชา/ อ.ศิริลักษณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_44_0114300223", "no": 44, "year": "2", "semester": "ฤดูร้อน", "code": "0114300223", "name": "ปฏิบัติการพยาบาลผู้ใหญ่และผู้สูงอายุ 1", "credits": "3(0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ศิริลักษณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_45_0114300224", "no": 45, "year": "2", "semester": "ฤดูร้อน", "code": "0114300224", "name": "ปฏิบัติการพยาบาลเด็กและวัยรุ่น 1", "credits": "2(0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.ธนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_46_0114300328", "no": 46, "year": "3", "semester": "ฤดูร้อน", "code": "0114300328", "name": "ปฏิบัติการพยาบาลสุขภาพจิตและจิตเวช", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.จริญญา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_47_0114300329", "no": 47, "year": "3", "semester": "ฤดูร้อน", "code": "0114300329", "name": "ปฏิบัติการพยาบาลมารดา ทารกฯ1", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "ผศ.ดวงหทัย", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}];
 const PLO_LABELS = ['PLO1','PLO2','PLO3','PLO4','PLO5','PLO6','PLO7','PLO8','PLO9','PLO10'];
 const PLO_FULL = [
   'PLO1: ใช้ความรู้ทางการพยาบาล การผดุงครรภ์และบูรณาการศาสตร์ที่เกี่ยวข้องในการให้บริการสุขภาพทุกช่วงวัย',
@@ -1161,6 +1768,7 @@ function showPage(pageId, btn) {
   }
   if (pageId === 'teaching-plan') populatePlanSelect();
   if (pageId === 'mko') initMkoPage();
+  if (pageId === 'executive') renderExecutive();
 }
 
 // ===========================
@@ -1196,10 +1804,18 @@ function loadAllData(cb) {
 
   callGAS({action: 'getAllSubjects'}, function(err, data) {
     if (!err && data && data.success) {
-      allSubjects = data.subjects || [];
+      const remote = data.subjects || [];
+      if (remote.length > 0) {
+        allSubjects = remote;
+      } else {
+        // No data in Sheet yet — use seed data
+        allSubjects = allSubjects.length > 0 ? allSubjects : [...SEED_SUBJECTS];
+      }
       localStorage.setItem('tms_subjects', JSON.stringify(allSubjects));
       setStatus(true);
     } else {
+      // Offline: use cache or seed
+      if (allSubjects.length === 0) allSubjects = [...SEED_SUBJECTS];
       setStatus(false);
     }
     if (cb) cb();
@@ -1273,12 +1889,12 @@ function renderDashboard() {
     tbody.innerHTML = recent.map(s => {
       const ploCount = Object.keys(s.plo_mapping || {}).length;
       return `<tr style="cursor:pointer;" onclick="drillSubjectDetail('${s.id}')" title="คลิกดูรายละเอียด">
-        <td><strong>${s.code || '-'}</strong></td>
-        <td>${s.name || '-'} <i class="fa fa-up-right-from-square ms-1" style="font-size:0.65rem;opacity:0.4;"></i></td>
-        <td>${s.instructor || '-'}</td>
-        <td><span class="badge-year">ปี ${s.year || '-'}</span></td>
-        <td><span class="badge-sem">ภาค ${s.semester || '-'}</span></td>
-        <td><span class="badge-plo">${ploCount} PLO</span></td>
+        <td data-label="รหัส"><strong>${s.code || '-'}</strong></td>
+        <td data-label="ชื่อวิชา">${s.name || '-'} <i class="fa fa-up-right-from-square ms-1" style="font-size:0.65rem;opacity:0.4;"></i></td>
+        <td data-label="ผู้รับผิดชอบ">${s.instructor || '-'}</td>
+        <td data-label="ชั้นปี"><span class="badge-year">ปี ${s.year || '-'}</span></td>
+        <td data-label="ภาคเรียน"><span class="badge-sem">ภาค ${s.semester || '-'}</span></td>
+        <td data-label="PLO"><span class="badge-plo">${ploCount} PLO</span></td>
       </tr>`;
     }).join('');
   }
@@ -1877,6 +2493,25 @@ function closeDrill() {
   document.getElementById('drillBackdrop').classList.remove('open');
   document.body.style.overflow = '';
 }
+
+// Swipe down to close modal on touch devices
+(function() {
+  let startY = 0;
+  document.addEventListener('touchstart', function(e) {
+    const modal = document.querySelector('.drill-modal');
+    if (modal && modal.contains(e.target)) startY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    const modal = document.querySelector('.drill-modal');
+    if (!modal) return;
+    const endY = e.changedTouches[0].clientY;
+    if (endY - startY > 80 && document.getElementById('drillBackdrop').classList.contains('open')) {
+      // Check if scrolled to top of modal body
+      const body = document.getElementById('dBody');
+      if (body && body.scrollTop < 10) closeDrill();
+    }
+  }, { passive: true });
+})();
 function closeDrillIfBackdrop(e) { if (e.target === document.getElementById('drillBackdrop')) closeDrill(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrill(); });
 
@@ -2079,6 +2714,462 @@ function drillSubjectDetail(id) {
   openDrill(s.name||'รายละเอียดวิชา', (s.code||'')+' | '+( s.instructor||'-'), html, foot);
 }
 
+
+
+
+// ===========================
+// EXECUTIVE SUMMARY
+// ===========================
+function renderExecutive() {
+  // Timestamp
+  const now = new Date();
+  const el = document.getElementById('execGenTime');
+  if (el) el.textContent = 'สร้างเมื่อ: ' + now.toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' }) + ' เวลา ' + now.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+
+  const total       = allSubjects.length;
+  const filled      = allSubjects.filter(s => s.methods && s.methods.length > 0).length;
+  const unfilled    = total - filled;
+  const instructors = [...new Set(allSubjects.map(s => (s.instructor||'').trim()).filter(Boolean))];
+  const pct         = total > 0 ? Math.round(filled / total * 100) : 0;
+
+  // ── PLO stats ──
+  const ploCount = {};
+  PLO_LABELS.forEach(p => ploCount[p] = 0);
+  allSubjects.forEach(s => {
+    Object.keys(s.plo_mapping || {}).forEach(p => { if (ploCount[p] !== undefined) ploCount[p]++; });
+  });
+  const ploMapped   = Object.values(ploCount).filter(v => v > 0).length;
+  const totalCLO    = allSubjects.reduce((sum, s) => sum + Object.keys(s.plo_mapping || {}).length, 0);
+
+  // ── มคอ. stats ──
+  const mkoTotal = allMko.length;
+  const mkoOk    = allMko.filter(m => m.status === 'อนุมัติ').length;
+  const mkoWait  = allMko.filter(m => m.status === 'รอตรวจสอบ').length;
+  const mkoFix   = allMko.filter(m => m.status === 'แก้ไข').length;
+
+  // ── KPI Grid ──
+  const avatarColors = ['#1a3a5c','#7c3aed','#0d9488','#dc2626','#d97706','#16a34a'];
+  const kpis = [
+    { icon:'fa-book', val:total, label:'รายวิชาทั้งหมด', sub:'วิชา', stripe:'#2563a8', trend:'', tclass:'' },
+    { icon:'fa-check-circle', val:filled, label:'บันทึกข้อมูลแล้ว', sub:'วิชา', stripe:'#16a34a',
+      trend: pct + '% สมบูรณ์', tclass: pct >= 80 ? 'trend-up' : pct >= 50 ? 'trend-warn' : 'trend-down' },
+    { icon:'fa-clock', val:unfilled, label:'รอดำเนินการ', sub:'วิชา', stripe:'#d97706',
+      trend: unfilled === 0 ? 'ครบทุกวิชา ✓' : unfilled + ' วิชา', tclass: unfilled === 0 ? 'trend-up' : unfilled <= 5 ? 'trend-warn' : 'trend-down' },
+    { icon:'fa-users', val:instructors.length, label:'ผู้รับผิดชอบ', sub:'คน', stripe:'#7c3aed', trend:'', tclass:'' },
+    { icon:'fa-diagram-project', val:totalCLO, label:'CLO-PLO Mapping', sub:'รายการ', stripe:'#0d9488',
+      trend: ploMapped + '/10 PLO', tclass: ploMapped >= 8 ? 'trend-up' : ploMapped >= 5 ? 'trend-warn' : 'trend-down' },
+    { icon:'fa-file-circle-check', val:mkoTotal, label:'มคอ. ที่ส่งแล้ว', sub:'ฉบับ', stripe:'#e8a020',
+      trend: mkoOk + ' อนุมัติ / ' + mkoWait + ' รอ', tclass: mkoFix > 0 ? 'trend-warn' : mkoOk === mkoTotal && mkoTotal > 0 ? 'trend-up' : '' }
+  ];
+
+  document.getElementById('execKpiGrid').innerHTML = kpis.map(k => `
+    <div class="exec-kpi">
+      <div class="exec-kpi-stripe" style="background:${k.stripe};"></div>
+      <div class="exec-kpi-icon"><i class="fa ${k.icon}" style="color:${k.stripe};"></i></div>
+      <div class="exec-kpi-val" style="color:${k.stripe};">${k.val}</div>
+      <div class="exec-kpi-label">${k.label}</div>
+      <div class="exec-kpi-sub">${k.sub}</div>
+      ${k.trend ? `<div class="exec-kpi-trend ${k.tclass}">${k.trend}</div>` : ''}
+    </div>`).join('');
+
+  // ── Gauge ──
+  const arc = document.getElementById('execGaugeArc');
+  const circumference = 2 * Math.PI * 65; // 408.41
+  if (arc) {
+    const offset = circumference - (pct / 100) * circumference;
+    setTimeout(() => { arc.style.strokeDashoffset = offset; }, 100);
+    document.getElementById('execGaugePct').textContent = pct + '%';
+    document.getElementById('execGaugeSub').textContent = filled + '/' + total + ' วิชา';
+  }
+
+  document.getElementById('execCompDetail').innerHTML = [
+    { label: 'บันทึกข้อมูลครบ', val: filled, color: '#16a34a' },
+    { label: 'รอดำเนินการ', val: unfilled, color: '#d97706' }
+  ].map(r => `<div class="d-flex justify-content-between align-items-center mb-2">
+      <span style="font-size:0.82rem;">${r.label}</span>
+      <strong style="color:${r.color};">${r.val}</strong>
+    </div>
+    <div class="comp-meter mb-2"><div style="width:${total>0?Math.round(r.val/total*100):0}%;background:${r.color};"></div></div>`
+  ).join('');
+
+  // ── PLO Coverage Bars ──
+  const maxPlo = Math.max(...Object.values(ploCount), 1);
+  const ploColors = ['#1a3a5c','#2563a8','#7c3aed','#0d9488','#16a34a','#d97706','#dc2626','#0891b2','#7c3aed','#e8a020'];
+  document.getElementById('execPloCoverage').innerHTML = PLO_LABELS.map((p, i) => `
+    <div class="plo-cover-row">
+      <div class="plo-cover-name">${p}</div>
+      <div class="plo-cover-bar-wrap">
+        <div class="plo-cover-bar" style="width:${Math.round(ploCount[p]/maxPlo*100)}%;background:${ploColors[i]};"></div>
+      </div>
+      <div class="plo-cover-count">${ploCount[p]} วิชา</div>
+    </div>`).join('');
+
+  // ── Year/Semester Table ──
+  const years = ['1','2','3','4'];
+  const sems  = ['1','2','ฤดูร้อน'];
+  let yearHtml = '';
+  let grandTotal = 0; let grandFilled = 0;
+  years.forEach(y => {
+    const sem1 = allSubjects.filter(s => String(s.year) === y && String(s.semester) === '1');
+    const sem2 = allSubjects.filter(s => String(s.year) === y && String(s.semester) === '2');
+    const semS = allSubjects.filter(s => String(s.year) === y && (String(s.semester) === 'ฤดูร้อน' || String(s.semester) === 'summer'));
+    const rowTotal  = sem1.length + sem2.length + semS.length;
+    const rowFilled = [...sem1,...sem2,...semS].filter(s => s.methods && s.methods.length > 0).length;
+    if (rowTotal === 0) return;
+    grandTotal += rowTotal; grandFilled += rowFilled;
+    const pctRow = rowTotal > 0 ? Math.round(rowFilled/rowTotal*100) : 0;
+    yearHtml += `<tr>
+      <td><span class="badge-year">ชั้นปีที่ ${y}</span></td>
+      <td class="text-center">${sem1.length}</td>
+      <td class="text-center">${sem2.length}</td>
+      <td class="text-center">${semS.length||'-'}</td>
+      <td class="text-center"><strong>${rowTotal}</strong></td>
+      <td>
+        <div style="font-size:0.75rem;color:${pctRow===100?'#16a34a':pctRow>=50?'#d97706':'#dc2626'};font-weight:700;">${pctRow}%</div>
+        <div class="comp-meter"><div style="width:${pctRow}%;background:${pctRow===100?'#16a34a':pctRow>=50?'#d97706':'#dc2626'};"></div></div>
+      </td>
+    </tr>`;
+  });
+  yearHtml += `<tr style="background:#f0f6ff;font-weight:700;">
+    <td>รวมทั้งหมด</td>
+    <td class="text-center" colspan="3">—</td>
+    <td class="text-center">${grandTotal}</td>
+    <td><span style="color:${grandFilled===grandTotal?'#16a34a':'#d97706'};">${grandTotal>0?Math.round(grandFilled/grandTotal*100):0}%</span></td>
+  </tr>`;
+  document.getElementById('execYearTbody').innerHTML = yearHtml || '<tr><td colspan="6" class="text-center py-3 text-muted">ไม่มีข้อมูล</td></tr>';
+
+  // ── Method Distribution ──
+  const methodCount = {};
+  allSubjects.forEach(s => {
+    (s.methods || []).forEach(m => {
+      const k = (m.teaching || 'ไม่ระบุ').split('(')[0].trim().substring(0, 30);
+      methodCount[k] = (methodCount[k] || 0) + 1;
+    });
+  });
+  const sortedMethods = Object.entries(methodCount).sort((a,b) => b[1]-a[1]).slice(0, 10);
+  const maxM = sortedMethods.length > 0 ? sortedMethods[0][1] : 1;
+  const mColors = ['#1a3a5c','#2563a8','#3b82c8','#7c3aed','#0d9488','#16a34a','#d97706','#dc2626','#0891b2','#e8a020'];
+  document.getElementById('execMethods').innerHTML = sortedMethods.length ?
+    sortedMethods.map(([m, c], i) => `
+      <div class="plo-cover-row">
+        <div style="flex:1;font-size:0.8rem;">${m}</div>
+        <div class="plo-cover-bar-wrap" style="min-width:80px;">
+          <div class="plo-cover-bar" style="width:${Math.round(c/maxM*100)}%;background:${mColors[i%mColors.length]};"></div>
+        </div>
+        <div class="plo-cover-count">${c} ครั้ง</div>
+      </div>`).join('') :
+    '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ยังไม่มีข้อมูล</h5></div>';
+
+  // ── Instructor Workload ──
+  const instMap = {};
+  allSubjects.forEach(s => {
+    const k = (s.instructor || 'ไม่ระบุ').trim();
+    if (!instMap[k]) instMap[k] = { count: 0, filled: 0 };
+    instMap[k].count++;
+    if (s.methods && s.methods.length > 0) instMap[k].filled++;
+  });
+  const sortedInst = Object.entries(instMap).sort((a,b) => b[1].count - a[1].count).slice(0,10);
+  const avColors = ['#1a3a5c','#7c3aed','#0d9488','#dc2626','#d97706','#16a34a','#0891b2','#e8a020','#2563a8','#047857'];
+  document.getElementById('execInstructors').innerHTML = sortedInst.map(([name, d], i) => {
+    const init = name.replace(/ผศ\.|ดร\.|อ\./g,'').trim().charAt(0) || '?';
+    const pctI = d.count > 0 ? Math.round(d.filled/d.count*100) : 0;
+    return `<div class="exec-inst-row">
+      <div class="exec-inst-rank">${i+1}</div>
+      <div class="exec-inst-av" style="background:${avColors[i%avColors.length]};">${init}</div>
+      <div style="flex:1;">
+        <div class="exec-inst-name">${name}</div>
+        <div class="exec-inst-count">${d.count} วิชา | บันทึกแล้ว ${d.filled} วิชา (${pctI}%)</div>
+        <div class="comp-meter mt-1" style="height:5px;"><div style="width:${pctI}%;background:${avColors[i%avColors.length]};"></div></div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ไม่มีข้อมูล</h5></div>';
+
+  // ── มคอ. KPI ──
+  document.getElementById('execMkoKpi').innerHTML = [
+    { label:'ส่งแล้วทั้งหมด', val:mkoTotal, color:'#0d9488', icon:'fa-file-alt' },
+    { label:'อนุมัติแล้ว',   val:mkoOk,    color:'#16a34a', icon:'fa-circle-check' },
+    { label:'รอตรวจสอบ',     val:mkoWait,  color:'#d97706', icon:'fa-clock' },
+    { label:'ขอแก้ไข',       val:mkoFix,   color:'#dc2626', icon:'fa-exclamation' }
+  ].map(k => `<div class="col-6">
+    <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;border:1.5px solid var(--border);">
+      <div style="font-size:0.75rem;color:var(--text-muted);"><i class="fa ${k.icon} me-1" style="color:${k.color};"></i>${k.label}</div>
+      <div style="font-family:'Kanit',sans-serif;font-size:1.6rem;font-weight:800;color:${k.color};">${k.val}</div>
+    </div>
+  </div>`).join('');
+
+  // มคอ. type breakdown
+  const mkoTypes = ['มคอ.3','มคอ.4','มคอ.5','มคอ.6'];
+  const mkoTypeColors = ['#2563a8','#7c3aed','#16a34a','#e8a020'];
+  const mkoTypeCounts = mkoTypes.map(t => allMko.filter(m => m.type === t).length);
+  const maxMko = Math.max(...mkoTypeCounts, 1);
+  document.getElementById('execMkoTypeBreakdown').innerHTML = mkoTypes.map((t,i) => `
+    <div class="plo-cover-row">
+      <div style="min-width:60px;font-size:0.8rem;font-weight:700;color:${mkoTypeColors[i]};">${t}</div>
+      <div class="plo-cover-bar-wrap">
+        <div class="plo-cover-bar" style="width:${Math.round(mkoTypeCounts[i]/maxMko*100)}%;background:${mkoTypeColors[i]};"></div>
+      </div>
+      <div class="plo-cover-count">${mkoTypeCounts[i]} ฉบับ</div>
+    </div>`).join('');
+
+  // ── Alerts ──
+  const alerts = [];
+  if (unfilled > 0) alerts.push({ type:'red', icon:'fa-circle-exclamation',
+    msg:`มี <strong>${unfilled} วิชา</strong> ที่ยังไม่ได้บันทึกข้อมูลการจัดการเรียนการสอน` });
+  if (mkoWait > 0) alerts.push({ type:'amber', icon:'fa-clock',
+    msg:`มี <strong>${mkoWait} ฉบับ</strong> รอการตรวจสอบ มคอ.` });
+  if (mkoFix > 0) alerts.push({ type:'red', icon:'fa-rotate-left',
+    msg:`มี <strong>${mkoFix} ฉบับ</strong> ที่ถูกส่งกลับให้แก้ไข` });
+  const ploBelow3 = PLO_LABELS.filter(p => ploCount[p] < 3 && ploCount[p] > 0);
+  if (ploBelow3.length > 0) alerts.push({ type:'amber', icon:'fa-triangle-exclamation',
+    msg:`PLO ที่มีวิชา Mapping น้อย (< 3 วิชา): <strong>${ploBelow3.join(', ')}</strong>` });
+  const ploZero = PLO_LABELS.filter(p => ploCount[p] === 0);
+  if (ploZero.length > 0) alerts.push({ type:'red', icon:'fa-ban',
+    msg:`PLO ที่ยังไม่มีวิชา Mapping เลย: <strong>${ploZero.join(', ')}</strong>` });
+  if (unfilled === 0 && mkoWait === 0 && mkoFix === 0 && ploZero.length === 0)
+    alerts.push({ type:'green', icon:'fa-circle-check', msg:'ไม่มีรายการเร่งด่วนที่ต้องดำเนินการในขณะนี้' });
+
+  document.getElementById('execAlerts').innerHTML = alerts.map(a =>
+    `<div class="exec-alert ${a.type}"><i class="fa ${a.icon} mt-1 flex-shrink-0"></i><div>${a.msg}</div></div>`
+  ).join('') || '<div class="exec-alert green"><i class="fa fa-circle-check"></i><div>ไม่มีรายการเร่งด่วน</div></div>';
+
+  // ── Recommendations ──
+  const recs = [];
+  if (pct < 100) recs.push({ icon:'fa-pencil', text:`เร่งรัดให้อาจารย์บันทึกข้อมูลการจัดการเรียนการสอนอีก ${unfilled} วิชา เพื่อให้ครบ 100%` });
+  if (ploMapped < 10) recs.push({ icon:'fa-diagram-project', text:`ควรทบทวน PLO ที่ยังไม่มีวิชา Mapping (${ploZero.join(', ')||'-'}) เพื่อให้หลักสูตรครบถ้วน` });
+  const methodTypes = Object.keys(methodCount).length;
+  if (methodTypes < 3) recs.push({ icon:'fa-chalkboard-teacher', text:'ควรส่งเสริมการใช้วิธีการจัดการเรียนการสอนที่หลากหลายมากขึ้น (Active Learning)' });
+  if (mkoTotal === 0) recs.push({ icon:'fa-file-circle-check', text:'ยังไม่มีการส่ง มคอ. ในระบบ กรุณาแจ้งอาจารย์เพื่อเริ่มส่งเอกสาร มคอ.3 ก่อนเปิดภาคการศึกษา' });
+  if (instructors.length > 0) {
+    const highLoad = sortedInst.filter(([n,d]) => d.count >= 3);
+    if (highLoad.length > 0) recs.push({ icon:'fa-user-clock', text:`อาจารย์ที่รับผิดชอบวิชาจำนวนมาก (≥3 วิชา): ${highLoad.slice(0,3).map(([n])=>n).join(', ')}` });
+  }
+  if (recs.length === 0) recs.push({ icon:'fa-thumbs-up', text:'ข้อมูลมีความสมบูรณ์ดี ควรรักษาคุณภาพการบันทึกและการติดตาม มคอ. อย่างต่อเนื่อง' });
+
+  document.getElementById('execRecommend').innerHTML = recs.map(r =>
+    `<div class="exec-alert blue"><i class="fa ${r.icon} mt-1 flex-shrink-0"></i><div>${r.text}</div></div>`
+  ).join('');
+
+  // ── CLO Weight Table ──
+  const sorted = [...allSubjects].sort((a,b) => {
+    const ya = parseInt(a.year)||0, yb = parseInt(b.year)||0;
+    if (ya !== yb) return ya - yb;
+    return String(a.semester).localeCompare(String(b.semester));
+  });
+
+  document.getElementById('execCloTbody').innerHTML = sorted.map(s => {
+    const pm = s.plo_mapping || {};
+    const totalWeight = Object.values(pm).reduce((sum, v) => sum + parseFloat(v.pct||0), 0);
+    const hasFilled = s.methods && s.methods.length > 0;
+    const ploCells = PLO_LABELS.map(p => {
+      const v = pm[p];
+      return v ? `<td class="text-center" style="background:#dbeafe;color:#1e3a8a;font-weight:700;">${v.pct||'✓'}${v.pct?'%':''}</td>`
+               : '<td class="text-center" style="color:#e2e8f0;">—</td>';
+    }).join('');
+    return `<tr>
+      <td><span class="badge-year">ปี${s.year}</span> <span class="badge-sem">ภาค${s.semester}</span></td>
+      <td><strong>${s.code||'-'}</strong></td>
+      <td style="max-width:160px;font-size:0.78rem;">${s.name||'-'}</td>
+      <td style="font-size:0.78rem;">${s.instructor||'-'}</td>
+      ${ploCells}
+      <td class="text-center"><strong>${totalWeight||'-'}</strong></td>
+      <td>${hasFilled ? '<span class="st-ok">✓ มีข้อมูล</span>' : '<span class="st-wait">รอข้อมูล</span>'}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="16" class="text-center py-4 text-muted">ยังไม่มีข้อมูล</td></tr>';
+}
+
+// ===========================
+// EXCEL IMPORT SYSTEM
+// ===========================
+let xlsxParsedData = [];
+
+function onXlsxSelect(input) {
+  if (input.files && input.files[0]) {
+    readXlsxFile(input.files[0]);
+  }
+}
+
+function handleXlsxDrop(e) {
+  e.preventDefault();
+  document.getElementById('xlsxUploadZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && /\.(xlsx|xls)$/i.test(file.name)) {
+    readXlsxFile(file);
+  } else {
+    Swal.fire({ icon: 'warning', title: 'ไฟล์ไม่ถูกต้อง', text: 'รองรับเฉพาะ .xlsx และ .xls', confirmButtonColor: '#1a3a5c' });
+  }
+}
+
+function readXlsxFile(file) {
+  document.getElementById('xlsxFileChosen').textContent = '⏳ กำลังอ่านไฟล์...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+      parseXlsxRows(rows, file.name);
+    } catch(err) {
+      Swal.fire({ icon: 'error', title: 'อ่านไฟล์ไม่ได้', text: err.message, confirmButtonColor: '#1a3a5c' });
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseXlsxRows(rows, fileName) {
+  const SKIP_KEYWORDS = ['no', 'รหัส', 'บันทึก', 'ตัวอย่าง', 'รวม', ''];
+  xlsxParsedData = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const no_raw = String(row[0] || '').trim();
+
+    // Skip header/summary rows
+    if (!no_raw || SKIP_KEYWORDS.some(k => no_raw.toLowerCase().startsWith(k))) continue;
+    const no_f = parseFloat(no_raw);
+    if (isNaN(no_f)) continue;
+
+    const code = String(row[3] || '').trim();
+    const name = String(row[4] || '').trim();
+    if (!code || !name) continue;
+    if (['รหัส', 'รวม', 'ชื่อวิชา'].includes(code)) continue;
+
+    // Parse year/semester
+    let yr = String(row[1] || '').trim();
+    let sem = String(row[2] || '').trim();
+    try { yr = String(parseInt(parseFloat(yr))); } catch(e) {}
+    try {
+      const semF = parseFloat(sem);
+      if (!isNaN(semF)) sem = String(parseInt(semF));
+      else if (sem.toLowerCase().includes('summer')) sem = 'ฤดูร้อน';
+    } catch(e) {}
+
+    const instructor = String(row[10] || '').trim().replace(/\s+/g, ' ');
+
+    xlsxParsedData.push({
+      id: 'import_' + Date.now() + '_' + Math.floor(no_f),
+      no: Math.floor(no_f),
+      year: yr,
+      semester: sem,
+      code: code,
+      name: name,
+      credits: String(row[5] || '').trim(),
+      lecture:  parseInt(row[6]) || 0,
+      lab:      parseInt(row[7]) || 0,
+      practice: parseInt(row[8]) || 0,
+      ss:       parseInt(row[9]) || 0,
+      instructor: instructor,
+      methods: [],
+      plo_mapping: {},
+      workload_in: false,
+      workload_out: false,
+      workload_hours: '',
+      note: '',
+      updated_at: new Date().toISOString()
+    });
+  }
+
+  if (xlsxParsedData.length === 0) {
+    Swal.fire({ icon: 'warning', title: 'ไม่พบข้อมูล', text: 'ไม่พบข้อมูลวิชาในไฟล์ กรุณาตรวจสอบรูปแบบ', confirmButtonColor: '#1a3a5c' });
+    return;
+  }
+
+  // Show preview
+  document.getElementById('xlsxFileChosen').textContent = '✓ ' + fileName + ' — พบ ' + xlsxParsedData.length + ' รายวิชา';
+  document.getElementById('xlsxCount').textContent = xlsxParsedData.length + ' วิชา';
+  document.getElementById('xlsxImportCount').textContent = xlsxParsedData.length;
+
+  const preview = xlsxParsedData.slice(0, 20);
+  document.getElementById('xlsxPreviewTbody').innerHTML = preview.map(s => `<tr>
+    <td data-label="ชั้นปี"><span class="badge-year">ปี ${s.year}</span></td>
+    <td data-label="ภาค"><span class="badge-sem">ภาค ${s.semester}</span></td>
+    <td data-label="รหัส"><strong>${s.code}</strong></td>
+    <td data-label="ชื่อวิชา" style="max-width:200px;">${s.name}</td>
+    <td data-label="หน่วยกิต">${s.credits}</td>
+    <td data-label="ทบ.">${s.lecture}</td>
+    <td data-label="ทล.">${s.lab}</td>
+    <td data-label="ป.">${s.practice}</td>
+    <td data-label="SS">${s.ss}</td>
+    <td data-label="ผู้รับผิดชอบ">${s.instructor}</td>
+  </tr>`).join('') + (xlsxParsedData.length > 20 ? `<tr><td colspan="10" class="text-center py-2 text-muted" style="font-size:0.8rem;">... และอีก ${xlsxParsedData.length - 20} วิชา</td></tr>` : '');
+
+  document.getElementById('xlsxPreview').style.display = 'block';
+}
+
+function importXlsxData() {
+  if (!xlsxParsedData.length) return;
+
+  Swal.fire({
+    title: 'ยืนยันการนำเข้า?',
+    html: `นำเข้า <strong>${xlsxParsedData.length} วิชา</strong> จากไฟล์ Excel<br>
+           <small class="text-muted">ข้อมูลที่มี ID เดิมจะถูกข้าม / ข้อมูลใหม่จะถูกเพิ่ม</small>`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#16a34a',
+    cancelButtonText: 'ยกเลิก',
+    confirmButtonText: '<i class="fa fa-database me-1"></i>นำเข้าเลย'
+  }).then(r => {
+    if (!r.isConfirmed) return;
+    Swal.fire({ title: 'กำลังนำเข้า...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+    // Merge: skip subjects with same code+year+semester
+    const existingKeys = new Set(allSubjects.map(s => s.code + '_' + s.year + '_' + s.semester));
+    const toAdd = xlsxParsedData.filter(s => !existingKeys.has(s.code + '_' + s.year + '_' + s.semester));
+    const skipped = xlsxParsedData.length - toAdd.length;
+
+    if (toAdd.length === 0) {
+      Swal.fire({ icon: 'info', title: 'ไม่มีข้อมูลใหม่', text: `ข้อมูลทั้ง ${skipped} วิชามีอยู่แล้วในระบบ`, confirmButtonColor: '#1a3a5c' });
+      return;
+    }
+
+    // Send batch to GAS
+    callGAS({ action: 'importSubjects', data: JSON.stringify(toAdd) }, function(err, res) {
+      // Update local regardless
+      allSubjects = [...allSubjects, ...toAdd];
+      localStorage.setItem('tms_subjects', JSON.stringify(allSubjects));
+      renderDashboard();
+      renderSubjectsTable();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'นำเข้าสำเร็จ!',
+        html: `เพิ่ม <strong>${toAdd.length} วิชา</strong> ลงในระบบแล้ว${skipped > 0 ? '<br><small class="text-muted">ข้าม ' + skipped + ' วิชาที่มีอยู่แล้ว</small>' : ''}`,
+        confirmButtonColor: '#1a3a5c'
+      }).then(() => resetXlsxUpload());
+    });
+  });
+}
+
+function resetXlsxUpload() {
+  xlsxParsedData = [];
+  document.getElementById('xlsxFile').value = '';
+  document.getElementById('xlsxFileChosen').textContent = '';
+  document.getElementById('xlsxPreview').style.display = 'none';
+}
+
+// Load seed data to Google Sheets (one-time)
+function seedToSheets() {
+  Swal.fire({
+    title: 'โหลดข้อมูลตั้งต้น?',
+    html: `บันทึกข้อมูล <strong>${SEED_SUBJECTS.length} วิชา</strong> จากไฟล์ต้นฉบับลง Google Sheets<br>
+           <small class="text-muted">ข้อมูลที่มีอยู่แล้วจะไม่ถูกเขียนทับ</small>`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#16a34a',
+    cancelButtonText: 'ยกเลิก',
+    confirmButtonText: '<i class="fa fa-database me-1"></i>บันทึก Seed Data'
+  }).then(r => {
+    if (!r.isConfirmed) return;
+    Swal.fire({ title: 'กำลังบันทึก...', html: 'อาจใช้เวลา 10-30 วินาที', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    callGAS({ action: 'importSubjects', data: JSON.stringify(SEED_SUBJECTS) }, function(err, res) {
+      allSubjects = [...SEED_SUBJECTS];
+      localStorage.setItem('tms_subjects', JSON.stringify(allSubjects));
+      renderDashboard();
+      renderSubjectsTable();
+      Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: `บันทึก ${SEED_SUBJECTS.length} วิชาลง Google Sheets แล้ว`, confirmButtonColor: '#1a3a5c' });
+    });
+  });
+}
 
 // ===========================
 // มคอ. SYSTEM
@@ -2322,15 +3413,15 @@ function renderMkoTable() {
 
   const tbody = document.getElementById('mkoListTbody');
   tbody.innerHTML = list.length ? list.map((m,i) => `<tr>
-    <td>${i+1}</td>
-    <td><span class="mko-type">${m.type||'-'}</span></td>
-    <td><strong>${m.code||'-'}</strong><br><small style="color:var(--text-muted);">${m.name||''}</small></td>
-    <td>${m.instructor||'-'}</td>
-    <td><span class="badge-sem">ภาค ${m.semester||'-'}/${m.year||'-'}</span></td>
-    <td style="font-size:0.78rem;">${m.submitted_at ? m.submitted_at.split('T')[0] : '-'}</td>
-    <td>${mkoStatusBadge(m.status)}</td>
-    <td>${m.fileUrl ? `<a href="${m.fileUrl}" target="_blank" class="btn-status btn-view-file"><i class="fa fa-file me-1"></i>ดูไฟล์</a>` : '<span class="text-muted" style="font-size:0.78rem;">-</span>'}</td>
-    <td>
+    <td data-label="#">${i+1}</td>
+    <td data-label="ประเภท"><span class="mko-type">${m.type||'-'}</span></td>
+    <td data-label="รายวิชา"><strong>${m.code||'-'}</strong><br><small style="color:var(--text-muted);">${m.name||''}</small></td>
+    <td data-label="ผู้สอน">${m.instructor||'-'}</td>
+    <td data-label="ภาค/ปี"><span class="badge-sem">ภาค ${m.semester||'-'}/${m.year||'-'}</span></td>
+    <td data-label="วันที่ส่ง" style="font-size:0.78rem;">${m.submitted_at ? m.submitted_at.split('T')[0] : '-'}</td>
+    <td data-label="สถานะ">${mkoStatusBadge(m.status)}</td>
+    <td data-label="ไฟล์">${m.fileUrl ? `<a href="${m.fileUrl}" target="_blank" class="btn-status btn-view-file"><i class="fa fa-file me-1"></i>ดูไฟล์</a>` : '<span class="text-muted" style="font-size:0.78rem;">-</span>'}</td>
+    <td data-label="จัดการ">
       <div class="d-flex gap-1">
         <button class="btn-sm-action btn-detail" onclick="showMkoDetail('${m.id}')" title="รายละเอียด"><i class="fa fa-eye"></i></button>
         <button class="btn-sm-action btn-edit"   onclick="editMko('${m.id}')" title="แก้ไข"><i class="fa fa-pen"></i></button>
