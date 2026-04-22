@@ -746,6 +746,49 @@
       .exec-kpi-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
       .exec-kpi { padding:14px 12px; }
     }
+
+
+    /* ===== AUTOCOMPLETE SUBJECT PICKER ===== */
+    .ac-wrap { position: relative; }
+    .ac-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 500;
+      background: #fff; border: 1.5px solid var(--primary-lighter);
+      border-radius: 0 0 12px 12px; box-shadow: 0 8px 24px rgba(26,58,92,0.14);
+      max-height: 280px; overflow-y: auto; display: none;
+    }
+    .ac-dropdown.open { display: block; }
+    .ac-item {
+      padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    .ac-item:last-child { border-bottom: none; }
+    .ac-item:hover, .ac-item.highlighted { background: #f0f6ff; }
+    .ac-item-code { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+    .ac-item-name { font-size: 0.9rem; font-weight: 700; color: var(--text-main); }
+    .ac-item-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+    .ac-item-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+    .ac-empty { padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+    .ac-new-item { padding: 10px 14px; cursor: pointer; color: var(--primary-light); font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; border-top: 1.5px dashed var(--border); }
+    .ac-new-item:hover { background: #f0f6ff; }
+
+    /* selected subject info strip */
+    .subj-autofill-strip {
+      background: linear-gradient(90deg, #f0f9ff, #dbeafe);
+      border: 1.5px solid #93c5fd; border-radius: 10px;
+      padding: 10px 14px; margin-top: 8px;
+      display: none; align-items: center; gap: 10px;
+      font-size: 0.82rem;
+    }
+    .subj-autofill-strip.show { display: flex; }
+    .subj-autofill-strip .strip-icon { color: var(--primary-light); font-size: 1.1rem; flex-shrink: 0; }
+    .subj-autofill-strip .strip-text { flex: 1; }
+    .subj-autofill-strip .strip-clear { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.82rem; padding: 2px 6px; border-radius: 6px; }
+    .subj-autofill-strip .strip-clear:hover { background: #fee2e2; }
+
+    @media (max-width: 768px) {
+      .ac-dropdown { max-height: 220px; }
+      .ac-item { padding: 9px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -933,7 +976,14 @@
       <h2 class="page-title"><i class="fa fa-circle-plus me-2 text-primary"></i>บันทึกข้อมูลการออกแบบการจัดการเรียนการสอน</h2>
       <p class="page-subtitle">กรอกข้อมูลรายวิชา วิธีการสอน การวัดประเมิน และการ Mapping CLO → PLO</p>
 
-      <div class="info-banner"><i class="fa fa-circle-info fa-lg"></i> กรอกข้อมูลให้ครบถ้วน ระบบจะบันทึกลง Google Sheets อัตโนมัติ</div>
+      <div class="info-banner" style="background:linear-gradient(90deg,#dbeafe,#ede9fe);">
+        <i class="fa fa-circle-info fa-lg"></i>
+        <div>
+          เลือก <strong>ปีการศึกษา / ชั้นปี / ภาคเรียน</strong> ก่อน แล้วพิมพ์รหัสหรือชื่อวิชา
+          — ระบบจะแสดงรายชื่อวิชาให้เลือกและ <strong>กรอกข้อมูลอัตโนมัติ</strong>
+          <span style="opacity:.7;">| ถ้าไม่มีในระบบ สามารถพิมพ์เพิ่มเองได้</span>
+        </div>
+      </div>
 
       <form id="subjectForm" onsubmit="saveSubjectData(event)">
         <input type="hidden" id="editId" value="" />
@@ -943,29 +993,87 @@
           <div class="card-header-custom"><i class="fa fa-book me-2"></i>ข้อมูลรายวิชา</div>
           <div class="card-body-custom">
             <div class="row g-3">
+
+              <!-- ปีการศึกษา -->
+              <div class="col-md-2">
+                <label class="form-label">ปีการศึกษา <span class="text-danger">*</span></label>
+                <select class="form-select" id="f_acadyear" required onchange="onFilterChange()">
+                  <option value="">เลือก</option>
+                  <option value="2569" selected>2569</option>
+                  <option value="2568">2568</option>
+                  <option value="2567">2567</option>
+                  <option value="2566">2566</option>
+                </select>
+              </div>
+
+              <!-- ชั้นปีที่ -->
               <div class="col-md-2">
                 <label class="form-label">ชั้นปีที่ <span class="text-danger">*</span></label>
-                <select class="form-select" id="f_year" required>
+                <select class="form-select" id="f_year" required onchange="onFilterChange()">
                   <option value="">เลือก</option>
-                  <option value="1">1</option><option value="2">2</option>
-                  <option value="3">3</option><option value="4">4</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
                 </select>
               </div>
+
+              <!-- ภาคเรียน -->
               <div class="col-md-2">
                 <label class="form-label">ภาคเรียน <span class="text-danger">*</span></label>
-                <select class="form-select" id="f_semester" required>
+                <select class="form-select" id="f_semester" required onchange="onFilterChange()">
                   <option value="">เลือก</option>
-                  <option value="1">1</option><option value="2">2</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="ฤดูร้อน">ฤดูร้อน</option>
                 </select>
               </div>
+
+              <!-- รหัสวิชา (autocomplete) -->
               <div class="col-md-3">
-                <label class="form-label">รหัสวิชา <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="f_code" placeholder="เช่น 0114300102" required />
+                <label class="form-label">รหัสวิชา <span class="text-danger">*</span>
+                  <span id="codeMatchCount" style="font-size:0.72rem;font-weight:400;color:var(--primary-light);"></span>
+                </label>
+                <div class="ac-wrap">
+                  <input type="text" class="form-control" id="f_code"
+                    placeholder="พิมพ์รหัสหรือค้นหา..."
+                    autocomplete="off" required
+                    oninput="onCodeInput()"
+                    onfocus="onCodeFocus()"
+                    onkeydown="onCodeKeydown(event)" />
+                  <div class="ac-dropdown" id="ac_code_list"></div>
+                </div>
               </div>
-              <div class="col-md-5">
+
+              <!-- ชื่อวิชา (autocomplete) -->
+              <div class="col-md-3">
                 <label class="form-label">ชื่อวิชา <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="f_name" placeholder="ชื่อรายวิชา" required />
+                <div class="ac-wrap">
+                  <input type="text" class="form-control" id="f_name"
+                    placeholder="พิมพ์ชื่อหรือค้นหา..."
+                    autocomplete="off" required
+                    oninput="onNameInput()"
+                    onfocus="onNameFocus()"
+                    onkeydown="onNameKeydown(event)" />
+                  <div class="ac-dropdown" id="ac_name_list"></div>
+                </div>
               </div>
+
+              <!-- Auto-fill info strip -->
+              <div class="col-12">
+                <div class="subj-autofill-strip" id="autofillStrip">
+                  <i class="fa fa-circle-check strip-icon"></i>
+                  <div class="strip-text">
+                    <strong id="stripSubjName">—</strong>
+                    <span id="stripSubjMeta" style="margin-left:8px;"></span>
+                  </div>
+                  <button type="button" class="strip-clear" onclick="clearAutofill()" title="ล้างการเลือก">
+                    <i class="fa fa-xmark me-1"></i>ล้าง
+                  </button>
+                </div>
+              </div>
+
+              <!-- หน่วยกิต + ชั่วโมง -->
               <div class="col-md-3">
                 <label class="form-label">จำนวนหน่วยกิต</label>
                 <input type="text" class="form-control" id="f_credits" placeholder="เช่น 3 (2-2-5)" />
@@ -986,9 +1094,12 @@
                 <label class="form-label">SS รวม (ชม.)</label>
                 <input type="number" class="form-control" id="f_ss" placeholder="60" min="0" />
               </div>
+
+              <!-- ผู้รับผิดชอบ -->
               <div class="col-md-12">
                 <label class="form-label">ผู้รับผิดชอบรายวิชา <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="f_instructor" placeholder="ชื่อ-นามสกุล ผู้รับผิดชอบ" required />
+                <input type="text" class="form-control" id="f_instructor"
+                  placeholder="ชื่อ-นามสกุล ผู้รับผิดชอบ" required />
               </div>
             </div>
           </div>
@@ -1048,7 +1159,7 @@
       </form>
     </section>
 
-    <!-- ===== CLO MAPPING ===== -->
+    <!-- ===== CLO MAPPING ===== -->    <!-- ===== CLO MAPPING ===== -->
     <section class="page-section" id="page-clo-mapping">
       <div class="breadcrumb-custom"><i class="fa fa-house me-1"></i> CLO Mapping</div>
       <h2 class="page-title"><i class="fa fa-diagram-project me-2 text-primary"></i>CLO → PLO Mapping ภาพรวม</h2>
@@ -1765,6 +1876,7 @@ function showPage(pageId, btn) {
   if (pageId === 'add-subject') {
     if (!document.getElementById('editId').value) clearForm();
     populateSubjectSelect();
+    onFilterChange();
   }
   if (pageId === 'teaching-plan') populatePlanSelect();
   if (pageId === 'mko') initMkoPage();
@@ -2123,6 +2235,7 @@ function saveSubjectData(e) {
   const editId = document.getElementById('editId').value;
   const payload = {
     id: editId || Date.now().toString(),
+    acadyear: document.getElementById('f_acadyear')?.value || '2569',
     year: document.getElementById('f_year').value,
     semester: document.getElementById('f_semester').value,
     code: document.getElementById('f_code').value,
@@ -2204,28 +2317,12 @@ function editSubject(id) {
   showPage('add-subject', null);
 
   setTimeout(() => {
-    document.getElementById('f_year').value = subj.year || '';
+    // ตั้งค่า ชั้นปี + ภาค ก่อน แล้วค่อย autofill
+    document.getElementById('f_year').value     = subj.year     || '';
     document.getElementById('f_semester').value = subj.semester || '';
-    document.getElementById('f_code').value = subj.code || '';
-    document.getElementById('f_name').value = subj.name || '';
-    document.getElementById('f_credits').value = subj.credits || '';
-    document.getElementById('f_lecture').value = subj.lecture || '';
-    document.getElementById('f_lab').value = subj.lab || '';
-    document.getElementById('f_practice').value = subj.practice || '';
-    document.getElementById('f_ss').value = subj.ss || '';
-    document.getElementById('f_instructor').value = subj.instructor || '';
-    document.getElementById('wb_in').checked = !!subj.workload_in;
-    document.getElementById('wb_out').checked = !!subj.workload_out;
-    document.getElementById('wb_hours').value = subj.workload_hours || '';
-    document.getElementById('f_note').value = subj.note || '';
-
-    // Methods
-    document.getElementById('methodRows').innerHTML = '';
-    methodRowCount = 0;
-    (subj.methods || []).forEach(m => addMethodRow(m));
-
-    // PLO
-    setPLOData(subj.plo_mapping || {});
+    autofillSubject(subj);
+    document.getElementById('editId').value = id;
+    onFilterChange();
   }, 100);
 }
 
@@ -2262,7 +2359,11 @@ function clearForm() {
   document.getElementById('methodRows').innerHTML = '';
   methodRowCount = 0;
   buildPLOGrid();
-  addMethodRow(); // Add one default row
+  addMethodRow();
+  // Reset autocomplete strip
+  const strip = document.getElementById('autofillStrip');
+  if (strip) strip.classList.remove('show');
+  closeAllAc();
 }
 
 // ===========================
@@ -2475,6 +2576,232 @@ function initDatabase() {
       }
     });
   });
+}
+
+
+
+// ===========================
+// SUBJECT AUTOCOMPLETE
+// ===========================
+let acHighlight   = -1;   // highlighted index in dropdown
+let acField       = null; // 'code' | 'name'
+let acResults     = [];   // current filtered list
+
+/* ── ปิด dropdown เมื่อคลิกข้างนอก ── */
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.ac-wrap')) closeAllAc();
+});
+function closeAllAc() {
+  document.getElementById('ac_code_list').classList.remove('open');
+  document.getElementById('ac_name_list').classList.remove('open');
+}
+
+/* ── กรองวิชาตาม ปีการศึกษา + ชั้นปี + ภาคเรียน ── */
+function getFilteredSubjects() {
+  const yr  = document.getElementById('f_year')?.value     || '';
+  const sem = document.getElementById('f_semester')?.value || '';
+  // กรองจาก allSubjects ตาม year/semester ถ้าเลือกไว้
+  return allSubjects.filter(s =>
+    (!yr  || String(s.year)     === String(yr)) &&
+    (!sem || String(s.semester) === String(sem))
+  );
+}
+
+/* ── เมื่อเปลี่ยน ปี/ชั้นปี/ภาค → refresh dropdown ── */
+function onFilterChange() {
+  const count = getFilteredSubjects().length;
+  const el    = document.getElementById('codeMatchCount');
+  if (el) el.textContent = count > 0 ? `(${count} วิชา)` : '';
+  // ถ้า code/name กำลัง open ให้ refresh
+  if (document.getElementById('ac_code_list').classList.contains('open')) onCodeInput();
+  if (document.getElementById('ac_name_list').classList.contains('open')) onNameInput();
+}
+
+/* ── render dropdown ── */
+function renderAcList(listId, items, query, field) {
+  const el = document.getElementById(listId);
+  if (!el) return;
+  acResults = items;
+  acHighlight = -1;
+  acField = field;
+
+  if (!items.length && !query) { el.classList.remove('open'); return; }
+
+  let html = '';
+  if (!items.length) {
+    html = `<div class="ac-empty"><i class="fa fa-magnifying-glass me-1"></i>ไม่พบในระบบ</div>
+            <div class="ac-new-item" onclick="confirmNewSubject('${query.replace(/'/g,"\\'")}','${field}')">
+              <i class="fa fa-plus-circle"></i>เพิ่ม "${query}" เป็นวิชาใหม่
+            </div>`;
+  } else {
+    html = items.slice(0, 30).map((s, i) => {
+      const hasFill = s.methods && s.methods.length > 0;
+      const ploCount = Object.keys(s.plo_mapping || {}).length;
+      return `<div class="ac-item" data-idx="${i}" onclick="selectAcItem(${i})">
+        <div class="ac-item-code">${s.code || '—'}</div>
+        <div class="ac-item-name">${highlight(s.name || '', query)}</div>
+        <div class="ac-item-meta">ปี ${s.year} ภาค ${s.semester} | ${s.instructor || '—'} | ${s.credits || '—'}</div>
+        <div class="ac-item-badges">
+          ${hasFill ? '<span class="spcard-status done" style="font-size:0.68rem;padding:1px 6px;"><i class="fa fa-check"></i> มีข้อมูล</span>' : ''}
+          ${ploCount > 0 ? `<span class="badge-plo">${ploCount} PLO</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    if (query) {
+      html += `<div class="ac-new-item" onclick="confirmNewSubject('${query.replace(/'/g,"\\'")}','${field}')">
+        <i class="fa fa-pen-to-square"></i>พิมพ์ใหม่เอง (ไม่เลือกจากระบบ)
+      </div>`;
+    }
+  }
+  el.innerHTML = html;
+  el.classList.add('open');
+}
+
+function highlight(text, q) {
+  if (!q) return text;
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return text.replace(re, '<mark style="background:#fef9c3;padding:0;">$1</mark>');
+}
+
+/* ── Code input ── */
+function onCodeInput() {
+  const q     = (document.getElementById('f_code')?.value || '').trim();
+  const pool  = getFilteredSubjects();
+  const items = pool.filter(s =>
+    (s.code || '').toLowerCase().includes(q.toLowerCase()) ||
+    (s.name || '').toLowerCase().includes(q.toLowerCase())
+  );
+  renderAcList('ac_code_list', items, q, 'code');
+  document.getElementById('ac_name_list').classList.remove('open');
+}
+function onCodeFocus() {
+  onFilterChange();
+  onCodeInput();
+}
+
+/* ── Name input ── */
+function onNameInput() {
+  const q     = (document.getElementById('f_name')?.value || '').trim();
+  const pool  = getFilteredSubjects();
+  const items = pool.filter(s =>
+    (s.name || '').toLowerCase().includes(q.toLowerCase()) ||
+    (s.code || '').toLowerCase().includes(q.toLowerCase())
+  );
+  renderAcList('ac_name_list', items, q, 'name');
+  document.getElementById('ac_code_list').classList.remove('open');
+}
+function onNameFocus() {
+  onFilterChange();
+  onNameInput();
+}
+
+/* ── Keyboard navigation ── */
+function acKeyNav(listId, e) {
+  const el    = document.getElementById(listId);
+  if (!el.classList.contains('open')) return;
+  const items = el.querySelectorAll('.ac-item');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acHighlight = Math.min(acHighlight + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acHighlight = Math.max(acHighlight - 1, -1);
+  } else if (e.key === 'Enter' && acHighlight >= 0) {
+    e.preventDefault();
+    selectAcItem(acHighlight);
+    return;
+  } else if (e.key === 'Escape') {
+    el.classList.remove('open'); return;
+  }
+  items.forEach((it, i) => it.classList.toggle('highlighted', i === acHighlight));
+  if (acHighlight >= 0) items[acHighlight]?.scrollIntoView({ block: 'nearest' });
+}
+function onCodeKeydown(e) { acKeyNav('ac_code_list', e); }
+function onNameKeydown(e) { acKeyNav('ac_name_list', e); }
+
+/* ── เลือกรายการจาก dropdown ── */
+function selectAcItem(idx) {
+  const s = acResults[idx];
+  if (!s) return;
+  autofillSubject(s);
+  closeAllAc();
+}
+
+/* ── Auto-fill ทุก field จากวิชาที่เลือก ── */
+function autofillSubject(s) {
+  document.getElementById('f_code').value      = s.code      || '';
+  document.getElementById('f_name').value      = s.name      || '';
+  document.getElementById('f_credits').value   = s.credits   || '';
+  document.getElementById('f_lecture').value   = s.lecture   || '';
+  document.getElementById('f_lab').value       = s.lab       || '';
+  document.getElementById('f_practice').value  = s.practice  || '';
+  document.getElementById('f_ss').value        = s.ss        || '';
+  document.getElementById('f_instructor').value = s.instructor || '';
+  // ตั้ง year / semester ถ้ายังไม่ได้เลือก
+  if (!document.getElementById('f_year').value && s.year)
+    document.getElementById('f_year').value = String(s.year);
+  if (!document.getElementById('f_semester').value && s.semester)
+    document.getElementById('f_semester').value = String(s.semester);
+  // editId — ใช้ id ของวิชาเดิมเพื่อ update แทน create ใหม่
+  document.getElementById('editId').value = s.id || '';
+
+  // แสดง strip
+  const strip    = document.getElementById('autofillStrip');
+  const stripName = document.getElementById('stripSubjName');
+  const stripMeta = document.getElementById('stripSubjMeta');
+  if (strip && stripName && stripMeta) {
+    strip.classList.add('show');
+    stripName.textContent = (s.code ? s.code + ' — ' : '') + (s.name || '');
+    stripMeta.textContent = `ปี ${s.year} ภาค ${s.semester} | ${s.instructor || '—'}`;
+  }
+
+  // ถ้าวิชามีข้อมูลเดิม → load methods + PLO
+  if (s.methods && s.methods.length > 0) {
+    document.getElementById('methodRows').innerHTML = '';
+    methodRowCount = 0;
+    s.methods.forEach(m => addMethodRow(m));
+  }
+  if (s.plo_mapping && Object.keys(s.plo_mapping).length > 0) {
+    buildPLOGrid();
+    setPLOData(s.plo_mapping);
+  }
+  if (s.workload_in  !== undefined) document.getElementById('wb_in').checked  = !!s.workload_in;
+  if (s.workload_out !== undefined) document.getElementById('wb_out').checked = !!s.workload_out;
+  if (s.workload_hours) document.getElementById('wb_hours').value = s.workload_hours;
+  if (s.note) document.getElementById('f_note').value = s.note;
+}
+
+function clearAutofill() {
+  document.getElementById('f_code').value      = '';
+  document.getElementById('f_name').value      = '';
+  document.getElementById('f_credits').value   = '';
+  document.getElementById('f_lecture').value   = '';
+  document.getElementById('f_lab').value       = '';
+  document.getElementById('f_practice').value  = '';
+  document.getElementById('f_ss').value        = '';
+  document.getElementById('f_instructor').value = '';
+  document.getElementById('editId').value       = '';
+  document.getElementById('autofillStrip').classList.remove('show');
+  document.getElementById('methodRows').innerHTML = '';
+  methodRowCount = 0;
+  addMethodRow();
+  buildPLOGrid();
+}
+
+/* ── พิมพ์ชื่อใหม่ (ไม่ใช่วิชาในระบบ) ── */
+function confirmNewSubject(val, field) {
+  closeAllAc();
+  if (field === 'code') {
+    document.getElementById('f_code').value = val;
+    document.getElementById('editId').value = '';
+    document.getElementById('autofillStrip').classList.remove('show');
+    document.getElementById('f_name').focus();
+  } else {
+    document.getElementById('f_name').value = val;
+    document.getElementById('editId').value = '';
+    document.getElementById('autofillStrip').classList.remove('show');
+    document.getElementById('f_credits').focus();
+  }
 }
 
 // ===========================
