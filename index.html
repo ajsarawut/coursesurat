@@ -172,11 +172,7 @@
 
     /* ===== PLO GRID ===== */
     .plo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-    .plo-item { border: 2px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: all .2s; user-select: none; }
-    .plo-item:hover { border-color: var(--primary-light); background: #f0f6ff; }
-    .plo-item.selected { border-color: var(--primary-light); background: #dbeafe; }
-    .plo-item input[type=number] { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; font-size: 0.8rem; margin-top: 6px; text-align: center; display: none; }
-    .plo-item.selected input[type=number] { display: block; }
+    /* plo-item: replaced by plo-card system */
     .plo-label { font-size: 0.78rem; font-weight: 600; color: var(--primary); }
     .plo-sub { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
 
@@ -296,10 +292,6 @@
       .mko-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
       /* PLO grid */
-      .plo-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .plo-item { padding: 8px 6px; }
-      .plo-label { font-size: 0.75rem; }
-      .plo-sub { font-size: 0.63rem; }
 
       /* Tables: horizontal scroll with hint */
       .table-container { -webkit-overflow-scrolling: touch; }
@@ -384,7 +376,6 @@
       .mko-stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
 
       /* PLO grid: 2 col */
-      .plo-grid { grid-template-columns: repeat(2, 1fr); }
 
       /* Header: compact */
       .header-brand .title-block h1 { font-size: 0.8rem; }
@@ -454,8 +445,7 @@
       .btn-sm-action { padding: 8px 12px; min-width: 36px; min-height: 36px; }
       .btn-status { padding: 7px 12px; min-height: 36px; }
       .btn-header { min-height: 36px; }
-      .plo-item { min-height: 64px; }
-      .stat-card, .mko-stat { min-height: 70px; }
+            .stat-card, .mko-stat { min-height: 70px; }
       .year-bar-row { min-height: 44px; }
       .d-subj-row { padding: 14px; }
       .d-inst-row { padding: 13px 14px; }
@@ -806,6 +796,72 @@
     .year-selector-bar select:focus { outline:none; border-color:var(--primary-light); box-shadow:0 0 0 3px rgba(37,99,168,0.12); }
     .year-selector-bar .year-badge { font-size:0.78rem; color:var(--text-muted); }
     @media(max-width:480px){ .year-selector-bar { padding:8px 12px; gap:8px; } }
+
+    /* ===== CLO PICKER (NEW) ===== */
+    .plo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .plo-card {
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all .2s;
+      background: #fff;
+    }
+    .plo-card:hover { box-shadow: 0 4px 16px rgba(26,58,92,0.12); }
+    .plo-card.selected { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(37,99,168,0.15); }
+
+    .plo-card-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; cursor: pointer;
+      background: #f8faff; border-bottom: 1.5px solid var(--border);
+      transition: background .15s;
+      user-select: none;
+    }
+    .plo-card-header:hover { background: #eef3ff; }
+    .plo-card.selected .plo-card-header { background: #dbeafe; border-bottom-color: #93c5fd; }
+    .plo-card-icon { width:36px; height:36px; border-radius:8px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-family:'Kanit',sans-serif; font-weight:700; flex-shrink:0; }
+    .plo-card.selected .plo-card-icon { background:var(--primary-light); }
+    .plo-card-title { flex:1; }
+    .plo-card-title strong { font-size:0.88rem; color:var(--primary); font-family:'Kanit',sans-serif; }
+    .plo-card-title small { font-size:0.72rem; color:var(--text-muted); display:block; line-height:1.3; margin-top:1px; }
+    .plo-card-toggle { color:var(--text-muted); font-size:0.8rem; transition:transform .2s; flex-shrink:0; }
+    .plo-card.open .plo-card-toggle { transform:rotate(180deg); }
+    .plo-card-check { color:var(--success); font-size:1rem; flex-shrink:0; display:none; }
+    .plo-card.selected .plo-card-check { display:block; }
+
+    .plo-card-body { display:none; padding:14px; border-top:1.5px solid var(--border); }
+    .plo-card.open .plo-card-body { display:block; }
+
+    /* CLO checkboxes */
+    .clo-list { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto; margin-bottom:12px; }
+    .clo-checkbox-row {
+      display:flex; align-items:flex-start; gap:8px;
+      padding:7px 10px; border-radius:8px; cursor:pointer;
+      transition:background .12s; border:1.5px solid transparent;
+    }
+    .clo-checkbox-row:hover { background:#f0f6ff; }
+    .clo-checkbox-row.checked { background:#dbeafe; border-color:#93c5fd; }
+    .clo-checkbox-row input[type=checkbox] { margin-top:3px; flex-shrink:0; cursor:pointer; width:16px; height:16px; accent-color:var(--primary-light); }
+    .clo-checkbox-row label { font-size:0.8rem; color:var(--text-main); cursor:pointer; line-height:1.4; }
+    .clo-id-badge { font-size:0.7rem; font-weight:700; color:var(--primary); background:#e0e7ff; border-radius:4px; padding:1px 6px; flex-shrink:0; margin-top:2px; }
+
+    /* Summary of selected CLOs */
+    .clo-selected-summary { background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; padding:8px 12px; font-size:0.78rem; color:#166534; margin-bottom:10px; display:none; }
+    .clo-selected-summary.show { display:block; }
+
+    /* ร้อยละ input */
+    .plo-pct-row { display:flex; align-items:center; gap:8px; }
+    .plo-pct-row label { font-size:0.8rem; color:var(--text-muted); white-space:nowrap; }
+    .plo-pct-row input { width:80px; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; font-size:0.85rem; }
+    .plo-pct-row input:focus { outline:none; border-color:var(--primary-light); }
+
+    @media(max-width:768px){
+      .plo-grid { grid-template-columns:1fr; }
+      .clo-list { max-height:200px; }
+    }
   </style>
 </head>
 <body>
@@ -1163,7 +1219,10 @@
         <div class="card-box">
           <div class="card-header-custom"><i class="fa fa-diagram-project me-2"></i>การ Mapping CLO → PLO</div>
           <div class="card-body-custom">
-            <div class="info-banner mb-3"><i class="fa fa-lightbulb fa-lg"></i> คลิกที่ PLO เพื่อเลือก แล้วกรอก CLO ที่เชื่อมโยง และร้อยละ</div>
+            <div class="info-banner mb-3">
+              <i class="fa fa-lightbulb fa-lg"></i>
+              <div><strong>คลิกที่ชื่อ PLO เพื่อขยาย</strong> แล้วเลือก CLO ย่อยที่เชื่อมโยง และกรอกร้อยละรวม — แต่ละ PLO มีรายการ CLO ให้เลือกจากหลักสูตรพยาบาล</div>
+            </div>
             <div class="plo-grid" id="ploGrid"></div>
           </div>
         </div>
@@ -1861,6 +1920,105 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJPxT60Q37l7222KZXxTbh
 // SEED DATA (จากไฟล์ต้นฉบับ)
 // ===========================
 const SEED_SUBJECTS = [{"id": "seed_1_GE101", "no": 1, "year": "1", "semester": "1", "code": "GE 101", "name": "ภาษาไทยเชิงวิชาการ", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.สุธาสีนี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_2_GE209", "no": 2, "year": "1", "semester": "1", "code": "GE 209", "name": "พลเมืองวิวัฒน์", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.สุธิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_3_GE302", "no": 3, "year": "1", "semester": "1", "code": "GE 302", "name": "การรู้ดิจิทัล", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "ผศ.ศราวุธ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_4_GE301", "no": 4, "year": "1", "semester": "1", "code": "GE 301", "name": "ผู้ประกอบการในยุคดิจิทัล", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.จิราพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_5_0114300102", "no": 5, "year": "1", "semester": "1", "code": "0114300102", "name": "กายวิภาคศาสตร์และสรีรวิทยา", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "ผศ.ดร.ฐิตาพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_6_0114300035", "no": 6, "year": "1", "semester": "1", "code": "0114300035", "name": "วิชาเลือกเสรี 1: การพัฒนาบุคลิกภาพและวุฒิภาวะทางอารมณ์", "credits": "2(2-0-4)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.อุมาพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_7_GE103", "no": 7, "year": "2", "semester": "1", "code": "GE 103", "name": "ภาษาอังกฤษเชิงวิชาการ", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "ผศ.ดร.ดาราวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_8_0114300205", "no": 8, "year": "2", "semester": "1", "code": "0114300205", "name": "เภสัชวิทยา", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 30, "instructor": "อ.เสาวลักษณ์/ อ.ณชา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_9_0114300206", "no": 9, "year": "2", "semester": "1", "code": "0114300206", "name": "พยาธิสรีรวิทยา", "credits": "3 (3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 45, "instructor": "อ.ลัดดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_10_0114300207", "no": 10, "year": "2", "semester": "1", "code": "0114300207", "name": "กฎหมาย จริยศาสตร์และจรรยาบรรณวิชาชีพการพยาบาล", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 30, "instructor": "อ.วีรวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_11_0114300208", "no": 11, "year": "2", "semester": "1", "code": "0114300208", "name": "มโนมติ ทฤษฎี และกระบวนการพยาบาล", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ปนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_12_0114300209", "no": 12, "year": "2", "semester": "1", "code": "0114300209", "name": "การพยาบาลขั้นพื้นฐาน", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.ณชา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_13_0114300036", "no": 13, "year": "2", "semester": "1", "code": "0114300036", "name": "วิชาเลือกเสรี 2: พืชสมุนไพร", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 30, "instructor": "อ.ชุลีพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_14_0114300313", "no": 14, "year": "3", "semester": "1", "code": "0114300313", "name": "การพยาบาลสุขภาพชุมชน", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ปิยรัตน์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_15_0114300314", "no": 15, "year": "3", "semester": "1", "code": "0114300314", "name": "การพยาบาลผู้ใหญ่และผู้สูงอายุ 2", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.เนตรนภา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_16_0114300315", "no": 16, "year": "3", "semester": "1", "code": "0114300315", "name": "วิจัยและนวัตกรรมทางการพยาบาล", "credits": "3 (1-4-4)", "lecture": 15, "lab": 60, "practice": 0, "ss": 75, "instructor": "ผศ.ดร.รุ่งนภา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_17_0114300316", "no": 17, "year": "3", "semester": "1", "code": "0114300316", "name": "การพยาบาลมารดา ทารกฯ 1", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.ลลิตวดี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_18_0114300317", "no": 18, "year": "3", "semester": "1", "code": "0114300317", "name": "การพยาบาลสุขภาพจิตและจิตเวช", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.ผกาสรณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_19_0114300038", "no": 19, "year": "3", "semester": "1", "code": "0114300038", "name": "วิชาเลือกเสรี 3: ศึกษาอิสระ", "credits": "2 (0-4-2)", "lecture": 0, "lab": 60, "practice": 0, "ss": 60, "instructor": "ผศ.วัจมัย", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_20_0114300325", "no": 20, "year": "3", "semester": "1", "code": "0114300325", "name": "ปฏิบัติการพยาบาลเด็กและวัยรุ่น 2", "credits": "2 (0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.รัชฎาภรณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_21_0114300330", "no": 21, "year": "3", "semester": "1", "code": "0114300330", "name": "ปฏิบัติการพยาบาลผู้สูงอายุ", "credits": "2 (0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.ฉันทนา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_22_GE105", "no": 22, "year": "4", "semester": "1", "code": "GE 105", "name": "ภาษาอังกฤษก้าวหน้า", "credits": "3(2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 60, "instructor": "อ.รพีพรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_23_0114300418", "no": 23, "year": "4", "semester": "1", "code": "0114300418", "name": "การพยาบาลมารดา ทารก ฯ 2", "credits": "3(3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 45, "instructor": "อ.ดร.พนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_24_0114300419", "no": 24, "year": "4", "semester": "1", "code": "0114300419", "name": "การพยาบาลและการบริหารจัดการสุขภาวะชุมชน", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.โศรตรีย์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_25_0114300420", "no": 25, "year": "4", "semester": "1", "code": "0114300420", "name": "การรักษาโรคเบื้องต้นสำหรับพยาบาล", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.สุธาสินี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_26_0114300421", "no": 26, "year": "4", "semester": "1", "code": "0114300421", "name": "การบริหารและการจัดการคุณภาพทางการพยาบาล", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "ผศ.วรรณดี", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_28_GE102", "no": 28, "year": "1", "semester": "2", "code": "GE 102", "name": "ภาษาอังกฤษเพื่อการสื่อสาร", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "อ.ดร.รวิวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_28_GE201", "no": 28, "year": "1", "semester": "2", "code": "GE 201", "name": "เราคือ สบช.", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "ผศ.ดร.มัฏฐวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_29_GE305", "no": 29, "year": "1", "semester": "2", "code": "GE 305", "name": "วิทยาศาสตร์และคณิตศาสตร์ในชีวิตประจำวัน", "credits": "3 (3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 90, "instructor": "อ.อำนวย", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_30_0114300101", "no": 30, "year": "1", "semester": "2", "code": "0114300101", "name": "จุลชีววิทยาและปรสิตวิทยา", "credits": "2 (2-0-4)", "lecture": 30, "lab": 0, "practice": 0, "ss": 60, "instructor": "อ.ผกาสรณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_31_0114300103", "no": 31, "year": "1", "semester": "2", "code": "0114300103", "name": "ชีวเคมีและโภชนศาสตร์", "credits": "3 (3-0-6)", "lecture": 45, "lab": 0, "practice": 0, "ss": 90, "instructor": "อ.ธนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_32_0114300104", "no": 32, "year": "1", "semester": "2", "code": "0114300104", "name": "จิตวิทยาพัฒนาการและกระบวนการคิด", "credits": "2(1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ญาณิศา/ อ.นุจเรศ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_33_GE104", "no": 33, "year": "2", "semester": "2", "code": "GE 104", "name": "ภาษาอังกฤษเพื่อการอ่านและการเขียนเชิงวิชาการ", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "อ.ขวัญตา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_34_0114300210", "no": 34, "year": "2", "semester": "2", "code": "0114300210", "name": "การพยาบาลผู้ใหญ่และผู้สูงอายุ 1", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "ผศ.ดร.ดาราวรรณ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_35_0114300211", "no": 35, "year": "2", "semester": "2", "code": "0114300211", "name": "การพยาบาลผู้สูงอายุ", "credits": "2 (1-2-3)", "lecture": 15, "lab": 30, "practice": 0, "ss": 45, "instructor": "อ.ดร.จีราพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_36_0114300212", "no": 36, "year": "2", "semester": "2", "code": "0114300212", "name": "การพยาบาลเด็กและวัยรุ่น", "credits": "3 (2-2-5)", "lecture": 30, "lab": 30, "practice": 0, "ss": 75, "instructor": "อ.ดร.กิจติยา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_37_114300222.0", "no": 37, "year": "2", "semester": "2", "code": "114300222.0", "name": "ปฏิบัติการพยาบาลขั้นพื้นฐาน", "credits": "4 (0-12-4)", "lecture": 0, "lab": 0, "practice": 180, "ss": 60, "instructor": "อ.กฤติยา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_38_0114300327", "no": 38, "year": "3", "semester": "2", "code": "0114300327", "name": "ปฏิบัติการพยาบาลผู้ใหญ่และผู้สูงอายุ 2", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.วรินทร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_39_0114300326", "no": 39, "year": "3", "semester": "2", "code": "0114300326", "name": "ปฏิบัติการพยาบาลสุขภาพชุมชน", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ดร.รสติกร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_40_0114300431", "no": 40, "year": "4", "semester": "2", "code": "0114300431", "name": "ปฏิบัติการพยาบาลมารดา ทารก ฯ 2", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.นุจเรศ", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_41_0114300432", "no": 41, "year": "4", "semester": "2", "code": "0114300432", "name": "ปฏิบัติการพยาบาลและการบริหารจัดการสุขภาวะชุมชน", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ชุลีพร", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_42_0114300433", "no": 42, "year": "4", "semester": "2", "code": "0114300433", "name": "ปฏิบัติการรักษาโรคเบื้องต้นสำหรับพยาบาล", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ปิยะดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_43_0114300434", "no": 43, "year": "4", "semester": "2", "code": "0114300434", "name": "ปฏิบัติการบริหารและการจัดการคุณภาพทางการพยาบาล", "credits": "2 (0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.ณชา/ อ.ศิริลักษณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_44_0114300223", "no": 44, "year": "2", "semester": "ฤดูร้อน", "code": "0114300223", "name": "ปฏิบัติการพยาบาลผู้ใหญ่และผู้สูงอายุ 1", "credits": "3(0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.ศิริลักษณ์", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_45_0114300224", "no": 45, "year": "2", "semester": "ฤดูร้อน", "code": "0114300224", "name": "ปฏิบัติการพยาบาลเด็กและวัยรุ่น 1", "credits": "2(0-6-2)", "lecture": 0, "lab": 0, "practice": 90, "ss": 30, "instructor": "อ.ธนิดา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_46_0114300328", "no": 46, "year": "3", "semester": "ฤดูร้อน", "code": "0114300328", "name": "ปฏิบัติการพยาบาลสุขภาพจิตและจิตเวช", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "อ.จริญญา", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}, {"id": "seed_47_0114300329", "no": 47, "year": "3", "semester": "ฤดูร้อน", "code": "0114300329", "name": "ปฏิบัติการพยาบาลมารดา ทารกฯ1", "credits": "3 (0-9-3)", "lecture": 0, "lab": 0, "practice": 135, "ss": 45, "instructor": "ผศ.ดวงหทัย", "methods": [], "plo_mapping": {}, "workload_in": false, "workload_out": false, "workload_hours": "", "note": "", "updated_at": "2026-04-01T00:00:00.000Z"}];
+
+// ===========================
+// CLO DATA (ครบทุก PLO)
+// ===========================
+const CLO_MAP = {
+  PLO1: [
+    { id:'1.1',  text:'บอก/อธิบายสาระสำคัญทางการพยาบาลในระบบสุขภาพได้ (I)' },
+    { id:'1.2',  text:'บอก/อธิบายความรู้ศาสตร์พื้นฐานวิชาชีพในการดูแลผู้รับบริการได้ (I)' },
+    { id:'1.3',  text:'บอก/อธิบายแนวคิดทฤษฎีหลักการทางการพยาบาลและการผดุงครรภ์ได้ (I)' },
+    { id:'1.4',  text:'บอก/อธิบายกระบวนการพยาบาลและการผดุงครรภ์ (I)' },
+    { id:'1.5',  text:'บอก/อธิบายการดูแลแบบองค์รวมและการบริการด้วยหัวใจความเป็นมนุษย์ (I)' },
+    { id:'1.6',  text:'บอก/อธิบายกฎหมายจริยธรรมและจรรยาบรรณวิชาชีพมาตรฐานการพยาบาล (I)' },
+    { id:'1.7',  text:'เชื่อมโยงความรู้ทางการพยาบาลและการผดุงครรภ์กับสถานการณ์ด้านสุขภาพอย่างมีวิจารณญาณ (R)' },
+    { id:'1.8',  text:'เชื่อมโยงความรู้ศาสตร์พื้นฐานวิชาชีพในการดูแลผู้รับบริการได้ (R)' },
+    { id:'1.9',  text:'ใช้ความรู้ศาสตร์พื้นฐานในการวางแผนดูแลผู้รับบริการทุกช่วงวัย (M)' },
+    { id:'1.10', text:'ใช้ความรู้ทางการพยาบาลในการวางแผนการพยาบาลแบบองค์รวม (M)' },
+  ],
+  PLO2: [
+    { id:'2.1', text:'ปฏิบัติการพยาบาลแบบองค์รวมโดยใช้กระบวนการพยาบาล ในภาวะปกติ ภาวะเสี่ยง และภาวะเจ็บป่วย (P)' },
+    { id:'2.2', text:'ปฏิบัติการพยาบาลแบบองค์รวม ในภาวะเจ็บป่วยวิกฤติ ฉุกเฉิน หรือภาวะซับซ้อน (M)' },
+    { id:'2.3', text:'ปฏิบัติการผดุงครรภ์แบบองค์รวม ในมารดาและทารกภาวะปกติ (P)' },
+    { id:'2.4', text:'ปฏิบัติการผดุงครรภ์แบบองค์รวม ในมารดาและทารกภาวะเสี่ยงสูงและมีปัญหาสุขภาพ (M)' },
+    { id:'2.5', text:'ปฏิบัติการพยาบาล การบริหารคุณภาพ การจัดการสุขภาวะชุมชน (M)' },
+    { id:'2.6', text:'ปฏิบัติการพยาบาลการรักษาโรคขั้นต้นแบบองค์รวม (M)' },
+  ],
+  PLO3: [
+    { id:'3.1', text:'แสดงพฤติกรรมอัตลักษณ์คุณธรรมของสถาบันพระบรมราชชนก ในชีวิตประจำวัน (I)' },
+    { id:'3.2', text:'แสดงพฤติกรรมตามอัตลักษณ์ หลักจริยธรรม จรรยาบรรณวิชาชีพในการปฏิบัติการพยาบาล (R)' },
+    { id:'3.3', text:'แสดงพฤติกรรมที่เป็นแบบอย่างตามหลักจริยธรรมและจรรยาบรรณวิชาชีพในการปฏิบัติการพยาบาล (P)' },
+    { id:'3.4', text:'แสดงพฤติกรรมการตัดสินใจเชิงจริยธรรมในการแก้ปัญหาทางการพยาบาล (M)' },
+  ],
+  PLO4: [
+    { id:'4.1', text:'แก้ปัญหาโดยรวบรวมข้อมูล ระบุปัญหา ออกแบบและดำเนินการแก้ปัญหาได้อย่างครบถ้วน (I)' },
+    { id:'4.2', text:'แก้ปัญหาโดยพิจารณาปัญหาอย่างรอบคอบบนพื้นฐานข้อมูลที่เชื่อถือได้ (R)' },
+    { id:'4.3', text:'แก้ปัญหาโดยการคิดที่หลากหลาย ริเริ่มนำไปสู่การพัฒนาต่อยอดสิ่งใหม่ (R)' },
+    { id:'4.4', text:'วางแผนการพยาบาลโดยพิจารณาปัญหาอย่างรอบคอบ นำไปสู่การตัดสินใจที่ถูกต้อง (P)' },
+    { id:'4.5', text:'วางแผนการพยาบาลโดยการคิดหลากหลาย ริเริ่มนำไปสู่การพัฒนาที่เป็นประโยชน์ (P)' },
+    { id:'4.6', text:'สร้างนวัตกรรมทางการพยาบาลโดยอาศัยความรู้และประสบการณ์จัดการปัญหาได้อย่างครบถ้วน (M)' },
+    { id:'4.7', text:'สร้างนวัตกรรมทางการพยาบาลโดยพิจารณาอย่างรอบคอบ นำไปสู่การตัดสินใจที่ถูกต้อง (M)' },
+    { id:'4.8', text:'สร้างนวัตกรรมทางการพยาบาลโดยการคิดหลากหลาย ริเริ่มพัฒนาสิ่งใหม่ (M)' },
+  ],
+  PLO5: [
+    { id:'5.1', text:'อธิบายหลักการสืบค้นข้อมูลเกี่ยวกับงานวิจัยและนวัตกรรมทางการพยาบาล (I)' },
+    { id:'5.2', text:'อธิบายหลักการอ่านและเขียนเชิงวิชาการ (I)' },
+    { id:'5.3', text:'วิเคราะห์ผลการวิจัยเพื่อนำไปใช้ในการปฏิบัติการพยาบาลและการผดุงครรภ์ (R)' },
+    { id:'5.4', text:'นำผลการวิจัยไปใช้ในการปฏิบัติการพยาบาลและการผดุงครรภ์ (P)' },
+    { id:'5.5', text:'ออกแบบวิจัยทางการพยาบาลโดยตระหนักถึงจริยธรรมการวิจัย (M)' },
+    { id:'5.6', text:'ออกแบบนวัตกรรมทางการพยาบาลโดยตระหนักถึงจริยธรรมการพัฒนานวัตกรรม (M)' },
+    { id:'5.7', text:'วางแผนใช้ผลการวิจัยในการปฏิบัติการพยาบาลและการผดุงครรภ์ (M)' },
+    { id:'5.8', text:'พัฒนางานวิจัยหรือนวัตกรรมทางการพยาบาล (M)' },
+  ],
+  PLO6: [
+    { id:'6.1',  text:'อธิบายแนวคิด หลักการการทำงานเป็นทีม (K: I)' },
+    { id:'6.2',  text:'อธิบายแนวคิด หลักการภาวะผู้นำ (K: I)' },
+    { id:'6.3',  text:'อธิบายแนวคิด หลักการการสร้างสัมพันธภาพและการสื่อสาร การบริหารความขัดแย้ง (K: I)' },
+    { id:'6.4',  text:'อธิบายแนวคิด หลักการการประสานความร่วมมือ และการเสริมสร้างพลังอำนาจ (K: I)' },
+    { id:'6.5',  text:'อธิบายสิทธิหน้าที่พลเมือง สิทธิของตนเอง และสิทธิของผู้อื่น (K: I)' },
+    { id:'6.6',  text:'อธิบายแนวทางการพัฒนาการรู้จัก เข้าใจตนเอง และผู้อื่น (K: I)' },
+    { id:'6.7',  text:'แสดงออกถึงภาวะผู้นำและการทำงานเป็นทีม (S: R)' },
+    { id:'6.8',  text:'แสดงออกความคิดเห็นในสิ่งที่ถูกต้องตามสิทธิของตนเอง ไม่ละเมิดสิทธิผู้อื่น (S: R)' },
+    { id:'6.9',  text:'ปฏิบัติการพยาบาลโดยคำนึงถึงสิทธิผู้ป่วย กฎหมาย จริยศาสตร์ และจรรยาบรรณวิชาชีพ (S: P)' },
+    { id:'6.10', text:'แสดงออกถึงสมรรถนะในการประสานความร่วมมือและการทำงานเป็นทีม (S: M)' },
+    { id:'6.11', text:'บูรณาการความรู้เกี่ยวกับสิทธิผู้ป่วย การรู้จักตนเองและผู้อื่นในการปฏิบัติการพยาบาล (S: M)' },
+    { id:'6.12', text:'อธิบายวิธีการวิเคราะห์ข้อมูลเพื่อความเข้าใจสถานการณ์ชุมชน การบริหารจัดการสุขภาวะชุมชน (K: M)' },
+    { id:'6.13', text:'บริหารจัดการสุขภาวะชุมชนแบบองค์รวม โดยใช้แนวคิดการดูแลสุขภาพปฐมภูมิ (S: M)' },
+  ],
+  PLO7: [
+    { id:'7.1', text:'เลือกใช้คำศัพท์ได้สอดคล้องกับสถานการณ์ ถูกต้องตามหลักไวยากรณ์ ภาษาไทยและอังกฤษ (R)' },
+    { id:'7.2', text:'เลือกใช้รูปแบบประโยคได้สอดคล้องกับสถานการณ์ ถูกต้องตามหลักไวยากรณ์ (R)' },
+    { id:'7.3', text:'สรุปใจความสำคัญจากการฟังและอ่าน ภาษาไทยและภาษาอังกฤษ (P)' },
+    { id:'7.4', text:'นำเสนอสาระสำคัญเชิงวิชาการ/วิชาชีพ ด้วยภาษาไทยและ/หรือภาษาอังกฤษ (P)' },
+    { id:'7.5', text:'ใช้ภาษาไทยและภาษาอังกฤษในการสร้างเรื่องราวเพื่อสื่อสาร (P)' },
+    { id:'7.6', text:'ถ่ายทอดสาระสำคัญโดยการเขียนและพูด ภาษาไทยและอังกฤษเชิงวิชาการ (M)' },
+    { id:'7.7', text:'สื่อสารด้วยภาษาไทยและภาษาอังกฤษโดยผ่านการวิเคราะห์ สอดคล้องกับสถานการณ์ (M)' },
+  ],
+  PLO8: [
+    { id:'8.1', text:'อธิบายความสำคัญ ประเภท การเข้าถึง หลักการสร้างสื่อ กฎหมายและจริยธรรมที่เกี่ยวข้อง (K: I)' },
+    { id:'8.2', text:'อธิบายแนวโน้มเทคโนโลยีดิจิทัล และสารสนเทศทางการพยาบาลที่ทันสมัย (K: I)' },
+    { id:'8.3', text:'เลือกใช้สื่อ สารสนเทศ และเทคโนโลยีดิจิทัลเหมาะสมกับสถานการณ์ปฏิบัติการพยาบาล (S: R)' },
+    { id:'8.4', text:'สร้างสื่อ สารสนเทศหรือเทคโนโลยีดิจิทัลที่เป็นประโยชน์ในการดูแลสุขภาพ (S: P)' },
+    { id:'8.5', text:'ประยุกต์ใช้สื่อ สารสนเทศหรือเทคโนโลยีดิจิทัลที่เป็นประโยชน์ในการดูแลสุขภาพ (S: M)' },
+  ],
+  PLO9: [
+    { id:'9.1', text:'อธิบายแนวคิดทักษะชีวิต/ปรัชญาเศรษฐกิจพอเพียง เพื่อพัฒนาตนเอง วิชาชีพ และสังคม (K: I)' },
+    { id:'9.2', text:'สะท้อนคิดทัศนคติเชิงบวกในการพัฒนาตนเองด้วยทักษะชีวิตโดยยึดหลักเศรษฐกิจพอเพียง (A: I)' },
+    { id:'9.3', text:'วิเคราะห์และจำแนกจุดเด่นจุดด้อยของตนเองได้ (A: R)' },
+    { id:'9.4', text:'วิเคราะห์สถานการณ์ตัวอย่าง/สถานการณ์จริงเกี่ยวกับการใช้ทักษะชีวิต (K: R)' },
+    { id:'9.5', text:'เลือกใช้ทักษะชีวิตที่สอดคล้องกับสถานการณ์โดยยึดหลักเศรษฐกิจพอเพียง (A: P)' },
+    { id:'9.6', text:'ออกแบบ/พัฒนานวัตกรรมสุขภาพทางการพยาบาลโดยใช้หลักเศรษฐกิจพอเพียง (K: M)' },
+  ],
+  PLO10: [
+    { id:'10.1', text:'อธิบายแนวคิดการเป็นผู้ประกอบการ และการเป็นผู้ประกอบการด้านสุขภาพได้ (I)' },
+    { id:'10.2', text:'เลือกใช้แนวคิดที่เกี่ยวข้องกับการเป็นผู้ประกอบการด้านสุขภาพ (R)' },
+    { id:'10.3', text:'เลือกใช้ระบบสุขภาพและนโยบายและแผนพัฒนาสุขภาพแห่งชาติได้ (R)' },
+    { id:'10.4', text:'วางแผนการออกแบบธุรกิจ หรือต่อยอดธุรกิจด้านสุขภาพได้ (M)' },
+    { id:'10.5', text:'เลือกใช้วิธีการจัดการความเสี่ยงและความปลอดภัยทางสุขภาพภายใต้จรรยาบรรณ (M)' },
+  ],
+};
+
 const PLO_LABELS = ['PLO1','PLO2','PLO3','PLO4','PLO5','PLO6','PLO7','PLO8','PLO9','PLO10'];
 const PLO_FULL = [
   'PLO1: ใช้ความรู้ทางการพยาบาล การผดุงครรภ์และบูรณาการศาสตร์ที่เกี่ยวข้องในการให้บริการสุขภาพทุกช่วงวัย',
@@ -2148,39 +2306,115 @@ function filterSubjects() {
 // ===========================
 // PLO GRID
 // ===========================
+/* ============================================================
+   PLO + CLO MAPPING SYSTEM (NEW)
+   ============================================================ */
+
 function buildPLOGrid() {
   const grid = document.getElementById('ploGrid');
-  grid.innerHTML = PLO_LABELS.map((plo, i) => `
-    <div class="plo-item" id="plo_item_${i}" onclick="togglePLO(${i})" title="${PLO_FULL[i]}">
-      <div class="plo-label">${plo}</div>
-      <div class="plo-sub">${PLO_DESC[i]}</div>
-      <div style="margin-top:6px;">
-        <label style="font-size:0.7rem;color:var(--text-muted);">CLO</label>
-        <input type="text" class="form-control form-control-sm mt-0" id="plo_clo_${i}" placeholder="1.1, 1.2" onclick="event.stopPropagation()" style="display:none;font-size:0.78rem;" />
-        <label style="font-size:0.7rem;color:var(--text-muted);">ร้อยละ</label>
-        <input type="number" class="form-control form-control-sm" id="plo_pct_${i}" placeholder="%" min="0" max="100" onclick="event.stopPropagation()" style="display:none;" />
+  if (!grid) return;
+  grid.innerHTML = PLO_LABELS.map((plo, i) => {
+    const clos   = CLO_MAP[plo] || [];
+    const cloItems = clos.map(c => `
+      <div class="clo-checkbox-row" id="crow_${plo}_${c.id.replace('.','_')}"
+           onclick="toggleCLO('${plo}','${c.id}',event)">
+        <input type="checkbox" id="clo_${plo}_${c.id.replace('.','_')}"
+               onclick="toggleCLO('${plo}','${c.id}',event)" />
+        <span class="clo-id-badge">CLO${c.id}</span>
+        <label for="clo_${plo}_${c.id.replace('.','_')}">${c.text}</label>
+      </div>`).join('');
+
+    return `
+    <div class="plo-card" id="plo_card_${i}">
+      <div class="plo-card-header" onclick="togglePLOCard(${i})">
+        <div class="plo-card-icon">${plo.replace('PLO','P')}</div>
+        <div class="plo-card-title">
+          <strong>${plo}</strong>
+          <small>${PLO_DESC[i]}</small>
+        </div>
+        <i class="fa fa-check-circle plo-card-check" style="color:#16a34a;"></i>
+        <i class="fa fa-chevron-down plo-card-toggle"></i>
       </div>
-    </div>`).join('');
+      <div class="plo-card-body">
+        <div class="clo-selected-summary" id="clo_summary_${i}"></div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--primary);margin-bottom:8px;">
+          เลือก CLO ที่เชื่อมโยง (${clos.length} CLO)
+        </div>
+        <div class="clo-list">${cloItems}</div>
+        <div class="plo-pct-row">
+          <label>ร้อยละรวม (%)</label>
+          <input type="number" id="plo_pct_${i}" placeholder="0-100" min="0" max="100"
+                 oninput="updatePLOSummary(${i})" />
+          <span style="font-size:0.75rem;color:var(--text-muted);">% ของคะแนนทั้งหมด</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function togglePLO(i) {
-  const item = document.getElementById('plo_item_' + i);
-  const cloInput = document.getElementById('plo_clo_' + i);
-  const pctInput = document.getElementById('plo_pct_' + i);
-  item.classList.toggle('selected');
-  const show = item.classList.contains('selected');
-  cloInput.style.display = show ? 'block' : 'none';
-  pctInput.style.display = show ? 'block' : 'none';
+function togglePLOCard(i) {
+  const card = document.getElementById('plo_card_' + i);
+  if (!card) return;
+  card.classList.toggle('open');
+}
+
+function toggleCLO(plo, cloId, e) {
+  if (e) e.stopPropagation();
+  const safeId = cloId.replace('.','_');
+  const cb  = document.getElementById('clo_' + plo + '_' + safeId);
+  const row = document.getElementById('crow_' + plo + '_' + safeId);
+  if (!cb) return;
+  // toggle checkbox
+  if (e && e.target === cb) {
+    // already toggled by native click
+  } else {
+    cb.checked = !cb.checked;
+  }
+  row.classList.toggle('checked', cb.checked);
+
+  // update card selected state
+  const i = PLO_LABELS.indexOf(plo);
+  updatePLOSummary(i);
+}
+
+function updatePLOSummary(i) {
+  const plo  = PLO_LABELS[i];
+  const card = document.getElementById('plo_card_' + i);
+  const clos = CLO_MAP[plo] || [];
+  const checked = clos.filter(c => {
+    const cb = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
+    return cb && cb.checked;
+  });
+
+  const summaryEl = document.getElementById('clo_summary_' + i);
+  if (summaryEl) {
+    if (checked.length > 0) {
+      summaryEl.classList.add('show');
+      summaryEl.innerHTML = `<i class="fa fa-check-circle me-1"></i>
+        เลือกแล้ว ${checked.length} CLO: <strong>${checked.map(c => 'CLO'+c.id).join(', ')}</strong>`;
+    } else {
+      summaryEl.classList.remove('show');
+    }
+  }
+
+  // card selected = มี CLO ถูกเลือก
+  if (card) card.classList.toggle('selected', checked.length > 0);
 }
 
 function getPLOData() {
   const result = {};
   PLO_LABELS.forEach((plo, i) => {
-    const item = document.getElementById('plo_item_' + i);
-    if (item && item.classList.contains('selected')) {
+    const clos    = CLO_MAP[plo] || [];
+    const checked = clos.filter(c => {
+      const cb = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
+      return cb && cb.checked;
+    });
+    if (checked.length > 0) {
+      const pctEl = document.getElementById('plo_pct_' + i);
       result[plo] = {
-        clo: document.getElementById('plo_clo_' + i).value,
-        pct: document.getElementById('plo_pct_' + i).value
+        clo:  checked.map(c => c.id).join(', '),
+        clos: checked.map(c => c.id),        // array
+        pct:  pctEl ? pctEl.value : ''
       };
     }
   });
@@ -2189,21 +2423,50 @@ function getPLOData() {
 
 function setPLOData(mapping) {
   PLO_LABELS.forEach((plo, i) => {
-    const item = document.getElementById('plo_item_' + i);
-    if (!item) return;
-    if (mapping && mapping[plo]) {
-      item.classList.add('selected');
-      const cloInput = document.getElementById('plo_clo_' + i);
-      const pctInput = document.getElementById('plo_pct_' + i);
-      cloInput.style.display = 'block';
-      pctInput.style.display = 'block';
-      cloInput.value = mapping[plo].clo || '';
-      pctInput.value = mapping[plo].pct || '';
-    } else {
-      item.classList.remove('selected');
-      document.getElementById('plo_clo_' + i).style.display = 'none';
-      document.getElementById('plo_pct_' + i).style.display = 'none';
+    const clos = CLO_MAP[plo] || [];
+    if (!mapping || !mapping[plo]) {
+      // uncheck all
+      clos.forEach(c => {
+        const cb  = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
+        const row = document.getElementById('crow_' + plo + '_' + c.id.replace('.','_'));
+        if (cb)  cb.checked = false;
+        if (row) row.classList.remove('checked');
+      });
+      const card = document.getElementById('plo_card_' + i);
+      if (card) card.classList.remove('selected','open');
+      return;
     }
+
+    // Parse saved CLO ids (could be "1.1, 1.2" string or array)
+    const saved = mapping[plo];
+    let cloIds = [];
+    if (Array.isArray(saved.clos)) {
+      cloIds = saved.clos.map(String);
+    } else if (saved.clo) {
+      cloIds = String(saved.clo).split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    // Check matching CLOs
+    let anyChecked = false;
+    clos.forEach(c => {
+      const cb  = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
+      const row = document.getElementById('crow_' + plo + '_' + c.id.replace('.','_'));
+      const on  = cloIds.includes(c.id) || cloIds.includes('CLO'+c.id);
+      if (cb)  cb.checked = on;
+      if (row) row.classList.toggle('checked', on);
+      if (on) anyChecked = true;
+    });
+
+    // Set pct
+    const pctEl = document.getElementById('plo_pct_' + i);
+    if (pctEl && saved.pct) pctEl.value = saved.pct;
+
+    // Open card if has data
+    const card = document.getElementById('plo_card_' + i);
+    if (card && anyChecked) {
+      card.classList.add('selected','open');
+    }
+    updatePLOSummary(i);
   });
 }
 
