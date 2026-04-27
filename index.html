@@ -797,31 +797,14 @@
     .year-selector-bar .year-badge { font-size:0.78rem; color:var(--text-muted); }
     @media(max-width:480px){ .year-selector-bar { padding:8px 12px; gap:8px; } }
 
-    /* ===== CLO PICKER (NEW) ===== */
-    .plo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 14px;
-    }
-    .plo-card {
-      border: 2px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      transition: all .2s;
-      background: #fff;
-    }
-    .plo-card:hover { box-shadow: 0 4px 16px rgba(26,58,92,0.12); }
-    .plo-card.selected { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(37,99,168,0.15); }
-
-    .plo-card-header {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 14px; cursor: pointer;
-      background: #f8faff; border-bottom: 1.5px solid var(--border);
-      transition: background .15s;
-      user-select: none;
-    }
-    .plo-card-header:hover { background: #eef3ff; }
-    .plo-card.selected .plo-card-header { background: #dbeafe; border-bottom-color: #93c5fd; }
+    /* ===== PLO CARD + CLO PICKER ===== */
+    .plo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+    .plo-card { border:2px solid var(--border); border-radius:14px; overflow:hidden; transition:all .2s; background:#fff; }
+    .plo-card:hover { box-shadow:0 4px 16px rgba(26,58,92,0.12); }
+    .plo-card.selected { border-color:var(--primary-light); box-shadow:0 0 0 3px rgba(37,99,168,0.15); }
+    .plo-card-header { display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; background:#f8faff; border-bottom:1.5px solid var(--border); transition:background .15s; user-select:none; }
+    .plo-card-header:hover { background:#eef3ff; }
+    .plo-card.selected .plo-card-header { background:#dbeafe; border-bottom-color:#93c5fd; }
     .plo-card-icon { width:36px; height:36px; border-radius:8px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-family:'Kanit',sans-serif; font-weight:700; flex-shrink:0; }
     .plo-card.selected .plo-card-icon { background:var(--primary-light); }
     .plo-card-title { flex:1; }
@@ -831,37 +814,142 @@
     .plo-card.open .plo-card-toggle { transform:rotate(180deg); }
     .plo-card-check { color:var(--success); font-size:1rem; flex-shrink:0; display:none; }
     .plo-card.selected .plo-card-check { display:block; }
-
     .plo-card-body { display:none; padding:14px; border-top:1.5px solid var(--border); }
     .plo-card.open .plo-card-body { display:block; }
 
-    /* CLO checkboxes */
-    .clo-list { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto; margin-bottom:12px; }
+    /* CLO list */
+    .clo-list { display:flex; flex-direction:column; gap:5px; max-height:320px; overflow-y:auto; margin-bottom:10px; }
+    .clo-selected-summary { background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; padding:8px 12px; font-size:0.78rem; color:#166534; margin-bottom:10px; display:none; }
+    .clo-selected-summary.show { display:block; }
+    .clo-id-badge { font-size:0.7rem; font-weight:700; color:var(--primary); background:#e0e7ff; border-radius:4px; padding:1px 6px; flex-shrink:0; white-space:nowrap; }
+
+    /* Column header */
+    .clo-col-header {
+      display:grid;
+      grid-template-columns: 18px 52px 1fr 78px 180px;
+      gap:6px; align-items:center;
+      padding:5px 10px; background:#f0f6ff;
+      border-radius:8px; margin-bottom:5px;
+      font-size:0.7rem; font-weight:700; color:var(--text-muted);
+    }
+
+    /* CLO row — grid layout */
     .clo-checkbox-row {
-      display:flex; align-items:flex-start; gap:8px;
-      padding:7px 10px; border-radius:8px; cursor:pointer;
-      transition:background .12s; border:1.5px solid transparent;
+      display:grid;
+      grid-template-columns: 18px 52px 1fr 78px 180px;
+      gap:6px; align-items:center;
+      padding:7px 10px; border-radius:8px;
+      cursor:pointer; transition:background .12s;
+      border:1.5px solid transparent;
     }
     .clo-checkbox-row:hover { background:#f0f6ff; }
     .clo-checkbox-row.checked { background:#dbeafe; border-color:#93c5fd; }
-    .clo-checkbox-row input[type=checkbox] { margin-top:3px; flex-shrink:0; cursor:pointer; width:16px; height:16px; accent-color:var(--primary-light); }
-    .clo-checkbox-row label { font-size:0.8rem; color:var(--text-main); cursor:pointer; line-height:1.4; }
-    .clo-id-badge { font-size:0.7rem; font-weight:700; color:var(--primary); background:#e0e7ff; border-radius:4px; padding:1px 6px; flex-shrink:0; margin-top:2px; }
+    .clo-checkbox-row input[type=checkbox] { cursor:pointer; width:16px; height:16px; accent-color:var(--primary-light); justify-self:center; }
+    .clo-checkbox-row label { font-size:0.8rem; color:var(--text-main); cursor:pointer; line-height:1.35; }
 
-    /* Summary of selected CLOs */
-    .clo-selected-summary { background:#f0fdf4; border:1.5px solid #86efac; border-radius:8px; padding:8px 12px; font-size:0.78rem; color:#166534; margin-bottom:10px; display:none; }
-    .clo-selected-summary.show { display:block; }
+    /* % input */
+    .clo-pct-input {
+      width:100%; border:1.5px solid #93c5fd; border-radius:6px;
+      padding:4px 7px; font-size:0.82rem; text-align:center;
+      font-family:'Sarabun',sans-serif; background:#fff; color:var(--primary);
+      display:none; transition:border-color .15s;
+    }
+    .clo-checkbox-row.checked .clo-pct-input { display:block; }
+    .clo-pct-input:focus { outline:none; border-color:var(--primary-light); box-shadow:0 0 0 2px rgba(37,99,168,0.1); }
+    .clo-pct-input.over-limit { border-color:#fca5a5; background:#fff7f7; }
 
-    /* ร้อยละ input */
-    .plo-pct-row { display:flex; align-items:center; gap:8px; }
-    .plo-pct-row label { font-size:0.8rem; color:var(--text-muted); white-space:nowrap; }
-    .plo-pct-row input { width:80px; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; font-size:0.85rem; }
-    .plo-pct-row input:focus { outline:none; border-color:var(--primary-light); }
+    /* Tool select */
+    .clo-tool-input {
+      width:100%; border:1.5px solid var(--border); border-radius:6px;
+      padding:4px 7px; font-size:0.78rem;
+      font-family:'Sarabun',sans-serif; background:#fff; color:var(--text-main);
+      display:none; transition:border-color .15s; cursor:pointer;
+    }
+    .clo-checkbox-row.checked .clo-tool-input { display:block; }
+    .clo-tool-input:focus { outline:none; border-color:var(--primary-light); }
 
     @media(max-width:768px){
       .plo-grid { grid-template-columns:1fr; }
-      .clo-list { max-height:200px; }
+      .clo-col-header { display:none; }
+      .clo-checkbox-row {
+        grid-template-columns: 18px 52px 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .clo-checkbox-row .clo-pct-input { grid-column:2/-1; }
+      .clo-checkbox-row .clo-tool-input { grid-column:2/-1; }
+      .clo-list { max-height:240px; }
     }
+
+    /* ===== CLO % INPUT PER ROW ===== */
+    .clo-checkbox-row { flex-wrap: wrap; }
+    .clo-pct-input {
+      width: 72px; border: 1.5px solid #93c5fd;
+      border-radius: 6px; padding: 3px 7px;
+      font-size: 0.8rem; text-align: center;
+      font-family: 'Sarabun', sans-serif;
+      background: #fff; color: var(--primary);
+      transition: border-color .15s;
+    }
+    .clo-pct-input.over-limit { border-color: #fca5a5; background: #fff7f7; }
+    .clo-pct-input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 2px rgba(37,99,168,0.12); }
+    .clo-pct-unit { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* grand total bar */
+    .plo-grand-total {
+      background: linear-gradient(90deg,#f0f9ff,#dbeafe);
+      border: 1.5px solid #93c5fd; border-radius: 10px;
+      padding: 12px 16px; margin-top: 20px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .plo-grand-total .total-num {
+      font-family: 'Kanit', sans-serif; font-size: 2rem; font-weight: 800;
+      min-width: 56px; text-align: center;
+    }
+    .plo-grand-total .total-num.ok    { color: #16a34a; }
+    .plo-grand-total .total-num.warn  { color: #d97706; }
+    .plo-grand-total .total-num.over  { color: #dc2626; }
+    .plo-grand-total .total-label { font-size: 0.85rem; color: var(--text-muted); }
+    .plo-grand-total .total-bar-wrap { flex: 1; min-width: 120px; }
+    .plo-grand-total .total-bar { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+    .plo-grand-total .total-bar-fill { height: 100%; border-radius: 5px; transition: width .4s; }
+    .credit-target-badge { display:inline-flex; align-items:center; gap:5px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; border-radius:10px; padding:6px 14px; font-family:'Kanit',sans-serif; font-size:1rem; font-weight:700; }
+    .credit-target-badge small { font-size:0.7rem; font-weight:400; opacity:.85; display:block; line-height:1.1; }
+
+    /* sub-total per PLO */
+    .plo-subtotal-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; background: #f8fafc;
+      border-radius: 8px; margin-top: 8px; flex-wrap: wrap;
+    }
+    .plo-subtotal-row .sub-label { font-size: 0.78rem; color: var(--text-muted); flex: 1; }
+    .plo-subtotal-row .sub-num { font-size: 0.88rem; font-weight: 700; }
+    .plo-subtotal-row .sub-num.ok   { color: #16a34a; }
+    .plo-subtotal-row .sub-num.warn { color: #d97706; }
+    .plo-subtotal-row .sub-num.over { color: #dc2626; }
+
+    @media (max-width: 480px) {
+      .clo-pct-input { width: 64px; }
+      .plo-grand-total .total-num { font-size: 1.6rem; }
+    }
+
+
+    /* ===== REPORT CARDS CLICKABLE HOVER ===== */
+    #page-reports .card-box[onclick] {
+      transition: all .2s;
+    }
+    #page-reports .card-box[onclick]:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    #page-reports .card-box[onclick] .card-header-custom {
+      transition: opacity .2s;
+    }
+    #page-reports .card-box[onclick]:hover .card-header-custom {
+      opacity: 0.92;
+    }
+    /* report table rows */
+    #reportTbody tr { cursor: pointer; }
+    #reportTbody tr:hover { background: #f0f6ff; }
   </style>
 </head>
 <body>
@@ -1173,7 +1261,7 @@
               <!-- หน่วยกิต + ชั่วโมง -->
               <div class="col-md-3">
                 <label class="form-label">จำนวนหน่วยกิต</label>
-                <input type="text" class="form-control" id="f_credits" placeholder="เช่น 3 (2-2-5)" />
+                <input type="text" class="form-control" id="f_credits" placeholder="เช่น 3 (2-2-5)" oninput="recalcTotals()" />
               </div>
               <div class="col-md-2">
                 <label class="form-label">ทบ. (ชม.)</label>
@@ -1221,7 +1309,14 @@
           <div class="card-body-custom">
             <div class="info-banner mb-3">
               <i class="fa fa-lightbulb fa-lg"></i>
-              <div><strong>คลิกที่ชื่อ PLO เพื่อขยาย</strong> แล้วเลือก CLO ย่อยที่เชื่อมโยง และกรอกร้อยละรวม — แต่ละ PLO มีรายการ CLO ให้เลือกจากหลักสูตรพยาบาล</div>
+              <div>
+                <strong>คลิกที่ชื่อ PLO เพื่อขยาย</strong> แล้วเลือก CLO ย่อยและกรอก % ของแต่ละ CLO<br>
+                <span style="font-size:0.77rem;opacity:0.85;">
+                  % รวมทั้งหมด = <strong>ร้อยละ*Cr</strong> (หน่วยกิต × 100)
+                  เช่น 3 หน่วยกิต = 300, 4 หน่วยกิต = 400
+                  — กรอกหน่วยกิตในส่วนข้อมูลรายวิชาเพื่อดูเป้าหมาย
+                </span>
+              </div>
             </div>
             <div class="plo-grid" id="ploGrid"></div>
           </div>
@@ -1312,7 +1407,7 @@
         <div class="card-body-custom p-0">
           <div class="table-container">
             <table class="custom-table">
-              <thead><tr><th>รหัสวิชา</th><th>ชื่อวิชา</th><th>วิธีการสอน</th><th>วิธีการประเมิน</th><th>ร้อยละ</th><th>CLO ที่เชื่อม</th></tr></thead>
+              <thead><tr><th>รหัสวิชา</th><th>ชื่อวิชา</th><th>วิธีการสอน</th><th>วิธีการวัดประเมิน</th><th>เครื่องมือวัดประเมิน</th><th>ร้อยละ</th><th>PLO ที่เชื่อม</th></tr></thead>
               <tbody id="assessTbody"><tr><td colspan="6" class="text-center py-4 text-muted">กำลังโหลด...</td></tr></tbody>
             </table>
           </div>
@@ -1326,18 +1421,25 @@
       <h2 class="page-title"><i class="fa fa-chart-bar me-2 text-primary"></i>สรุปผลและรายงาน</h2>
       <p class="page-subtitle">ภาพรวมผลการดำเนินงาน Outcome-Based Education</p>
 
-      <div class="row g-3">
+      <!-- Row 1: PLO + วิธีสอน -->
+      <div class="row g-3 mb-3">
         <div class="col-12 col-md-6">
-          <div class="card-box">
-            <div class="card-header-custom"><i class="fa fa-award me-2"></i>สรุปการ Mapping PLO รวม</div>
+          <div class="card-box h-100" style="cursor:pointer;" onclick="drillReportCard('plo')" title="คลิกดูรายละเอียด">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-award me-2"></i>สรุปการ Mapping PLO รวม</span>
+              <i class="fa fa-arrow-up-right-from-square" style="font-size:0.75rem;opacity:0.7;"></i>
+            </div>
             <div class="card-body-custom" id="ploSummary">
               <div class="empty-state"><i class="fa fa-spinner fa-spin"></i></div>
             </div>
           </div>
         </div>
         <div class="col-12 col-md-6">
-          <div class="card-box">
-            <div class="card-header-custom"><i class="fa fa-graduation-cap me-2"></i>วิธีการจัดการเรียนรู้ที่ใช้</div>
+          <div class="card-box h-100" style="cursor:pointer;" onclick="drillReportCard('method')" title="คลิกดูรายละเอียด">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-chalkboard-teacher me-2"></i>วิธีการจัดการเรียนรู้ที่ใช้</span>
+              <i class="fa fa-arrow-up-right-from-square" style="font-size:0.75rem;opacity:0.7;"></i>
+            </div>
             <div class="card-body-custom" id="methodSummary">
               <div class="empty-state"><i class="fa fa-spinner fa-spin"></i></div>
             </div>
@@ -1345,10 +1447,48 @@
         </div>
       </div>
 
-      <div class="card-box mt-0">
+      <!-- Row 2: การวัดประเมิน + เครื่องมือ + ภาระงาน -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-4">
+          <div class="card-box h-100" style="cursor:pointer;" onclick="drillReportCard('assessment')" title="คลิกดูรายละเอียด">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-clipboard-check me-2"></i>วิธีการวัดและประเมินผล</span>
+              <i class="fa fa-arrow-up-right-from-square" style="font-size:0.75rem;opacity:0.7;"></i>
+            </div>
+            <div class="card-body-custom" id="assessSummary">
+              <div class="empty-state"><i class="fa fa-spinner fa-spin"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="card-box h-100" style="cursor:pointer;" onclick="drillReportCard('tool')" title="คลิกดูรายละเอียด">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-tools me-2"></i>เครื่องมือวัดและประเมินผล</span>
+              <i class="fa fa-arrow-up-right-from-square" style="font-size:0.75rem;opacity:0.7;"></i>
+            </div>
+            <div class="card-body-custom" id="toolSummary">
+              <div class="empty-state"><i class="fa fa-spinner fa-spin"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="card-box h-100" style="cursor:pointer;" onclick="drillReportCard('workload')" title="คลิกดูรายละเอียด">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-briefcase me-2"></i>ภาระงานนักศึกษา</span>
+              <i class="fa fa-arrow-up-right-from-square" style="font-size:0.75rem;opacity:0.7;"></i>
+            </div>
+            <div class="card-body-custom" id="workloadSummary">
+              <div class="empty-state"><i class="fa fa-spinner fa-spin"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report table -->
+      <div class="card-box">
         <div class="card-header-custom"><i class="fa fa-list-check me-2"></i>รายงานรายวิชา</div>
         <div class="card-body-custom p-0">
-          <div class="table-container">
+          <div class="table-container resp-table-wrap">
             <table class="custom-table">
               <thead><tr><th>#</th><th>รหัส</th><th>ชื่อวิชา</th><th>หน่วยกิต</th><th>ผู้รับผิดชอบ</th><th>PLO ที่ cover</th><th>%รวม CLO</th></tr></thead>
               <tbody id="reportTbody"><tr><td colspan="7" class="text-center py-4 text-muted">กำลังโหลด...</td></tr></tbody>
@@ -2313,19 +2453,50 @@ function filterSubjects() {
 function buildPLOGrid() {
   const grid = document.getElementById('ploGrid');
   if (!grid) return;
-  grid.innerHTML = PLO_LABELS.map((plo, i) => {
-    const clos   = CLO_MAP[plo] || [];
-    const cloItems = clos.map(c => `
-      <div class="clo-checkbox-row" id="crow_${plo}_${c.id.replace('.','_')}"
-           onclick="toggleCLO('${plo}','${c.id}',event)">
-        <input type="checkbox" id="clo_${plo}_${c.id.replace('.','_')}"
-               onclick="toggleCLO('${plo}','${c.id}',event)" />
-        <span class="clo-id-badge">CLO${c.id}</span>
-        <label for="clo_${plo}_${c.id.replace('.','_')}">${c.text}</label>
-      </div>`).join('');
 
-    return `
-    <div class="plo-card" id="plo_card_${i}">
+  const TOOL_OPTIONS = [
+    '','สอบข้อเขียน','สอบปฏิบัติ','ประเมินชิ้นงาน','ประเมินรายงาน',
+    'ประเมินการนำเสนอ','ประเมินกระบวนการกลุ่ม','ประเมินการปฏิบัติ',
+    'แบบสังเกตพฤติกรรม','แบบบันทึกการสะท้อนคิด','แบบประเมินโครงการ',
+    'Portfolio','แบบทดสอบออนไลน์','อื่นๆ'
+  ];
+
+  const cards = PLO_LABELS.map((plo, i) => {
+    const clos = CLO_MAP[plo] || [];
+
+    const colHeader = `<div class="clo-col-header">
+      <span></span>
+      <span>CLO</span>
+      <span>ผลลัพธ์การเรียนรู้</span>
+      <span style="text-align:center;">% (Cr×100)</span>
+      <span></span>
+      <span>เครื่องมือวัดประเมิน</span>
+    </div>`;
+
+    const cloItems = clos.map(c => {
+      const safe    = c.id.replace('.','_');
+      const toolOpts = TOOL_OPTIONS.map(o =>
+        `<option value="${o}">${o || '-- เลือก --'}</option>`
+      ).join('');
+      return `<div class="clo-checkbox-row" id="crow_${plo}_${safe}">
+        <input type="checkbox" id="clo_${plo}_${safe}"
+               onchange="onCLOChange('${plo}','${c.id}',this)" />
+        <span class="clo-id-badge">CLO${c.id}</span>
+        <label for="clo_${plo}_${safe}">${c.text}</label>
+        <input type="number" class="clo-pct-input"
+               id="cpct_${plo}_${safe}"
+               placeholder="%" min="0" step="any"
+               oninput="recalcTotals()"
+               onclick="event.stopPropagation()" />
+        <select class="clo-tool-input" id="ctool_${plo}_${safe}"
+                onclick="event.stopPropagation()"
+                onchange="updatePLOCardSummary(PLO_LABELS.indexOf('${plo}'))">
+          ${toolOpts}
+        </select>
+      </div>`;
+    }).join('');
+
+    return `<div class="plo-card" id="plo_card_${i}">
       <div class="plo-card-header" onclick="togglePLOCard(${i})">
         <div class="plo-card-icon">${plo.replace('PLO','P')}</div>
         <div class="plo-card-title">
@@ -2338,49 +2509,76 @@ function buildPLOGrid() {
       <div class="plo-card-body">
         <div class="clo-selected-summary" id="clo_summary_${i}"></div>
         <div style="font-size:0.78rem;font-weight:700;color:var(--primary);margin-bottom:8px;">
-          เลือก CLO ที่เชื่อมโยง (${clos.length} CLO)
+          <i class="fa fa-list-check me-1"></i>เลือก CLO กรอก % และเครื่องมือวัดประเมิน (${clos.length} CLO)
         </div>
+        ${colHeader}
         <div class="clo-list">${cloItems}</div>
-        <div class="plo-pct-row">
-          <label>ร้อยละรวม (%)</label>
-          <input type="number" id="plo_pct_${i}" placeholder="0-100" min="0" max="100"
-                 oninput="updatePLOSummary(${i})" />
-          <span style="font-size:0.75rem;color:var(--text-muted);">% ของคะแนนทั้งหมด</span>
+        <div class="plo-subtotal-row" id="plo_subtotal_${i}" style="display:none;">
+          <span class="sub-label"><i class="fa fa-sigma me-1"></i>รวม % ใน ${plo}</span>
+          <span class="sub-num" id="plo_subtotal_num_${i}">0%</span>
         </div>
       </div>
     </div>`;
   }).join('');
+
+  // grand total bar ด้านล่าง
+  const grandTotal = `<div class="plo-grand-total" id="ploGrandTotal" style="display:none;">
+    <!-- Credit target badge -->
+    <div>
+      <div class="credit-target-badge" id="creditTargetBadge">
+        <span id="creditTargetNum">—</span>
+        <small>ร้อยละ*Cr<br>เป้าหมาย</small>
+      </div>
+    </div>
+    <!-- Current sum -->
+    <div>
+      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:2px;">รวม % CLO ทั้งหมด</div>
+      <div class="total-num" id="grandTotalNum">0</div>
+    </div>
+    <!-- Bar -->
+    <div class="total-bar-wrap">
+      <div class="total-bar">
+        <div class="total-bar-fill" id="grandTotalBar" style="width:0%;background:#16a34a;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text-muted);margin-top:2px;">
+        <span>0</span>
+        <span id="grandTotalBarMid" style="font-weight:700;color:var(--primary-light);">เป้าหมาย —</span>
+        <span id="grandTotalBarMax">—</span>
+      </div>
+    </div>
+    <!-- Message -->
+    <div id="grandTotalMsg" style="font-size:0.78rem;font-weight:600;min-width:120px;"></div>
+  </div>`;
+
+  grid.innerHTML = cards + grandTotal;
 }
 
 function togglePLOCard(i) {
   const card = document.getElementById('plo_card_' + i);
-  if (!card) return;
-  card.classList.toggle('open');
+  if (card) card.classList.toggle('open');
 }
 
-function toggleCLO(plo, cloId, e) {
-  if (e) e.stopPropagation();
-  const safeId = cloId.replace('.','_');
-  const cb  = document.getElementById('clo_' + plo + '_' + safeId);
-  const row = document.getElementById('crow_' + plo + '_' + safeId);
-  if (!cb) return;
-  // toggle checkbox
-  if (e && e.target === cb) {
-    // already toggled by native click
-  } else {
-    cb.checked = !cb.checked;
+/* เมื่อ checkbox CLO เปลี่ยน */
+function onCLOChange(plo, cloId, cb) {
+  const safe = cloId.replace('.','_');
+  const row  = document.getElementById('crow_' + plo + '_' + safe);
+  if (row) row.classList.toggle('checked', cb.checked);
+  // ถ้า uncheck → clear %
+  if (!cb.checked) {
+    const pctEl = document.getElementById('cpct_' + plo + '_' + safe);
+    if (pctEl) pctEl.value = '';
   }
-  row.classList.toggle('checked', cb.checked);
-
-  // update card selected state
   const i = PLO_LABELS.indexOf(plo);
-  updatePLOSummary(i);
+  updatePLOCardSummary(i);
+  recalcTotals();
 }
 
-function updatePLOSummary(i) {
+/* อัปเดต summary ของแต่ละ card */
+function updatePLOCardSummary(i) {
   const plo  = PLO_LABELS[i];
   const card = document.getElementById('plo_card_' + i);
   const clos = CLO_MAP[plo] || [];
+
   const checked = clos.filter(c => {
     const cb = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
     return cb && cb.checked;
@@ -2391,14 +2589,145 @@ function updatePLOSummary(i) {
     if (checked.length > 0) {
       summaryEl.classList.add('show');
       summaryEl.innerHTML = `<i class="fa fa-check-circle me-1"></i>
-        เลือกแล้ว ${checked.length} CLO: <strong>${checked.map(c => 'CLO'+c.id).join(', ')}</strong>`;
+        เลือกแล้ว <strong>${checked.length}</strong> CLO:
+        ${checked.map(c => `<span class="clo-id-badge" style="margin:1px;">CLO${c.id}</span>`).join('')}`;
     } else {
       summaryEl.classList.remove('show');
     }
   }
-
-  // card selected = มี CLO ถูกเลือก
   if (card) card.classList.toggle('selected', checked.length > 0);
+}
+
+/* คำนวณ subtotal ต่อ PLO + grand total */
+/* ดึงจำนวนหน่วยกิตจากช่อง f_credits เช่น "3 (2-2-5)" → 3 */
+function getCreditsValue() {
+  const raw = (document.getElementById('f_credits')?.value || '').trim();
+  if (!raw) return null;
+  // ดึงตัวเลขแรก
+  const m = raw.match(/^(\d+(?:\.\d+)?)/);
+  if (m) return parseFloat(m[1]);
+  return null;
+}
+
+/* คำนวณ ร้อยละ*Cr = หน่วยกิต × 100 */
+function getCreditTarget() {
+  const cr = getCreditsValue();
+  return cr != null ? cr * 100 : null;
+}
+
+function recalcTotals() {
+  let grand = 0;
+  let anyChecked = false;
+
+  PLO_LABELS.forEach((plo, i) => {
+    const clos = CLO_MAP[plo] || [];
+    let subTotal = 0;
+    let hasAny   = false;
+
+    clos.forEach(c => {
+      const cb    = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
+      const pctEl = document.getElementById('cpct_' + plo + '_' + c.id.replace('.','_'));
+      if (cb && cb.checked) {
+        hasAny = true;
+        anyChecked = true;
+        const val = parseFloat(pctEl?.value) || 0;
+        subTotal += val;
+      }
+    });
+
+    grand += subTotal;
+
+    const subRow = document.getElementById('plo_subtotal_' + i);
+    const subNum = document.getElementById('plo_subtotal_num_' + i);
+    if (subRow && subNum) {
+      subRow.style.display = hasAny ? '' : 'none';
+      subNum.textContent   = subTotal.toFixed(subTotal % 1 === 0 ? 0 : 1);
+      subNum.className     = 'sub-num ' + (subTotal > 0 ? 'ok' : '');
+    }
+  });
+
+  // ── Grand Total (based on credit target) ──
+  const target = getCreditTarget();   // เช่น 300, 400, null
+  const gtWrap = document.getElementById('ploGrandTotal');
+  const gtNum  = document.getElementById('grandTotalNum');
+  const gtFill = document.getElementById('grandTotalBar');
+  const gtMsg  = document.getElementById('grandTotalMsg');
+  const gtBNum = document.getElementById('creditTargetNum');
+  const gtMid  = document.getElementById('grandTotalBarMid');
+  const gtMax  = document.getElementById('grandTotalBarMax');
+  const gtWrapEl = document.getElementById('ploGrandTotal');
+
+  if (gtWrapEl) {
+    gtWrapEl.style.display = anyChecked ? '' : 'none';
+  }
+
+  const g = Math.round(grand * 10) / 10;
+  const isOk   = target != null && g === target;
+  const isOver = target != null && g >  target;
+
+  // badge target
+  if (gtBNum) gtBNum.textContent = target != null ? target : '—';
+  if (gtMid)  gtMid.textContent  = target != null ? 'เป้าหมาย ' + target : 'เป้าหมาย —';
+  if (gtMax)  gtMax.textContent  = target != null ? '>' + target : '';
+
+  // current number + color
+  if (gtNum) {
+    gtNum.textContent = g;
+    gtNum.className   = 'total-num ' + (isOver ? 'over' : isOk ? 'ok' : 'warn');
+  }
+
+  // progress bar
+  if (gtFill) {
+    const barPct = target != null
+      ? Math.min((g / target) * 100, 100)
+      : Math.min(g, 100);
+    gtFill.style.width      = barPct + '%';
+    gtFill.style.background = isOver ? '#dc2626' : isOk ? '#16a34a' : '#d97706';
+  }
+
+  // message
+  if (gtMsg) {
+    if (target == null) {
+      gtMsg.innerHTML = `<span style="color:var(--text-muted);font-size:0.75rem;">
+        <i class="fa fa-circle-info me-1"></i>กรอกหน่วยกิตเพื่อดูเป้าหมาย</span>`;
+    } else {
+      const diff = Math.round(Math.abs(target - g) * 10) / 10;
+      gtMsg.innerHTML = isOk
+        ? `<span style="color:#16a34a;"><i class="fa fa-circle-check me-1"></i>ครบ ${target} พอดี!</span>`
+        : isOver
+        ? `<span style="color:#dc2626;"><i class="fa fa-triangle-exclamation me-1"></i>
+            เกินเป้าหมาย <strong>${diff}</strong><br>
+            <span style="font-weight:400;font-size:0.72rem;">ปรับลด % CLO ให้รวมไม่เกิน ${target}</span></span>`
+        : `<span style="color:#d97706;"><i class="fa fa-clock me-1"></i>ยังขาดอีก <strong>${diff}</strong></span>`;
+    }
+  }
+
+  // grand total bar wrapper — highlight เมื่อเกิน
+  if (gtWrapEl) {
+    gtWrapEl.style.borderColor = isOver ? '#fca5a5'
+      : isOk ? '#86efac' : '#93c5fd';
+    gtWrapEl.style.background  = isOver
+      ? 'linear-gradient(90deg,#fff7f7,#fee2e2)'
+      : isOk
+      ? 'linear-gradient(90deg,#f0fdf4,#dcfce7)'
+      : 'linear-gradient(90deg,#f0f9ff,#dbeafe)';
+  }
+
+  // highlight pct inputs เมื่อรวมเกิน target
+  PLO_LABELS.forEach(ploX => {
+    (CLO_MAP[ploX] || []).forEach(c => {
+      const inp = document.getElementById('cpct_' + ploX + '_' + c.id.replace('.','_'));
+      if (!inp) return;
+      const cb  = document.getElementById('clo_' + ploX + '_' + c.id.replace('.','_'));
+      if (cb && cb.checked && isOver) {
+        inp.classList.add('over-limit');
+        inp.title = 'ผลรวมทั้งหมด (' + g + ') เกินเป้าหมาย ' + target;
+      } else {
+        inp.classList.remove('over-limit');
+        inp.title = '';
+      }
+    });
+  });
 }
 
 function getPLOData() {
@@ -2409,14 +2738,27 @@ function getPLOData() {
       const cb = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
       return cb && cb.checked;
     });
-    if (checked.length > 0) {
-      const pctEl = document.getElementById('plo_pct_' + i);
-      result[plo] = {
-        clo:  checked.map(c => c.id).join(', '),
-        clos: checked.map(c => c.id),        // array
-        pct:  pctEl ? pctEl.value : ''
+    if (checked.length === 0) return;
+
+    // เก็บ % ต่อ CLO + รวม
+    const cloDetails = checked.map(c => {
+      const safe   = c.id.replace('.','_');
+      const pctEl  = document.getElementById('cpct_' + plo + '_' + safe);
+      const toolEl = document.getElementById('ctool_' + plo + '_' + safe);
+      return {
+        id:   c.id,
+        pct:  pctEl  ? (parseFloat(pctEl.value) || 0) : 0,
+        tool: toolEl ? toolEl.value : ''
       };
-    }
+    });
+    const totalPct = cloDetails.reduce((sum, c) => sum + c.pct, 0);
+
+    result[plo] = {
+      clo:      checked.map(c => c.id).join(', '),
+      clos:     checked.map(c => c.id),
+      cloData:  cloDetails,          // [{id, pct, tool}]
+      pct:      String(totalPct)
+    };
   });
   return result;
 }
@@ -2425,49 +2767,53 @@ function setPLOData(mapping) {
   PLO_LABELS.forEach((plo, i) => {
     const clos = CLO_MAP[plo] || [];
     if (!mapping || !mapping[plo]) {
-      // uncheck all
       clos.forEach(c => {
-        const cb  = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
-        const row = document.getElementById('crow_' + plo + '_' + c.id.replace('.','_'));
+        const safe  = c.id.replace('.','_');
+        const cb    = document.getElementById('clo_' + plo + '_' + safe);
+        const row   = document.getElementById('crow_' + plo + '_' + safe);
+        const pctEl = document.getElementById('cpct_' + plo + '_' + safe);
         if (cb)  cb.checked = false;
         if (row) row.classList.remove('checked');
+        if (pctEl) pctEl.value = '';
       });
       const card = document.getElementById('plo_card_' + i);
       if (card) card.classList.remove('selected','open');
+      updatePLOCardSummary(i);
       return;
     }
 
-    // Parse saved CLO ids (could be "1.1, 1.2" string or array)
     const saved = mapping[plo];
+    // parse saved CLO ids
     let cloIds = [];
-    if (Array.isArray(saved.clos)) {
-      cloIds = saved.clos.map(String);
-    } else if (saved.clo) {
-      cloIds = String(saved.clo).split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
+    if (Array.isArray(saved.clos)) cloIds = saved.clos.map(String);
+    else if (saved.clo) cloIds = String(saved.clo).split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
+
+    // parse per-CLO %
+    const cloDataMap = {};
+    if (Array.isArray(saved.cloData)) {
+      saved.cloData.forEach(d => { cloDataMap[String(d.id)] = d; }); // store full obj {id,pct,tool}
     }
 
-    // Check matching CLOs
     let anyChecked = false;
     clos.forEach(c => {
-      const cb  = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
-      const row = document.getElementById('crow_' + plo + '_' + c.id.replace('.','_'));
-      const on  = cloIds.includes(c.id) || cloIds.includes('CLO'+c.id);
+      const safe   = c.id.replace('.','_');
+      const cb     = document.getElementById('clo_' + plo + '_' + safe);
+      const row    = document.getElementById('crow_' + plo + '_' + safe);
+      const pctEl  = document.getElementById('cpct_' + plo + '_' + safe);
+      const toolEl = document.getElementById('ctool_' + plo + '_' + safe);
+      const on     = cloIds.includes(c.id) || cloIds.includes('CLO'+c.id);
       if (cb)  cb.checked = on;
       if (row) row.classList.toggle('checked', on);
+      if (on && pctEl)  pctEl.value  = cloDataMap[c.id]?.pct  || cloDataMap[c.id] || '';
+      if (on && toolEl) toolEl.value = cloDataMap[c.id]?.tool || '';
       if (on) anyChecked = true;
     });
 
-    // Set pct
-    const pctEl = document.getElementById('plo_pct_' + i);
-    if (pctEl && saved.pct) pctEl.value = saved.pct;
-
-    // Open card if has data
     const card = document.getElementById('plo_card_' + i);
-    if (card && anyChecked) {
-      card.classList.add('selected','open');
-    }
-    updatePLOSummary(i);
+    if (card && anyChecked) card.classList.add('selected','open');
+    updatePLOCardSummary(i);
   });
+  recalcTotals();
 }
 
 // ===========================
@@ -2481,12 +2827,20 @@ function addMethodRow(data) {
   div.id = 'methodRow_' + id;
   div.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <strong style="font-size:0.85rem;color:var(--primary);">กิจกรรมที่ ${id}</strong>
-      <button type="button" class="remove-row-btn" onclick="removeMethodRow(${id})"><i class="fa fa-times me-1"></i>ลบ</button>
+      <strong style="font-size:0.85rem;color:var(--primary);">
+        <i class="fa fa-list-ol me-1" style="opacity:0.6;"></i>กิจกรรมที่ ${id}
+      </strong>
+      <button type="button" class="remove-row-btn" onclick="removeMethodRow(${id})">
+        <i class="fa fa-times me-1"></i>ลบ
+      </button>
     </div>
     <div class="row g-2">
-      <div class="col-md-5">
-        <label class="form-label" style="font-size:0.8rem;">วิธีการจัดการเรียนการสอน</label>
+
+      <!-- วิธีการจัดการเรียนการสอน -->
+      <div class="col-md-4">
+        <label class="form-label" style="font-size:0.8rem;">
+          <i class="fa fa-chalkboard-teacher me-1" style="color:var(--primary-light);"></i>วิธีการจัดการเรียนการสอน
+        </label>
         <select class="form-select form-select-sm" id="teaching_${id}">
           <option value="">-- เลือก --</option>
           <option>การบรรยาย (Lecture)</option>
@@ -2497,14 +2851,19 @@ function addMethodRow(data) {
           <option>การเรียนรู้ตามสภาพจริง (Authentic learning)</option>
           <option>การสะท้อนคิด (Reflection)</option>
           <option>การเรียนรู้โดยใช้เทคโนโลยีเสริม (Technology-enhanced learning)</option>
-          <option>การเรียนรู้โดยใช้กรณีตัวอย่าง (Case-based learning)</option>
           <option>การฝึกปฏิบัติ (Practice)</option>
           <option>อื่นๆ</option>
         </select>
-        <input type="text" class="form-control form-control-sm mt-1" id="teaching_custom_${id}" placeholder="ระบุวิธีอื่น (ถ้าเลือก อื่นๆ)" style="display:none;" />
+        <input type="text" class="form-control form-control-sm mt-1"
+               id="teaching_custom_${id}" placeholder="ระบุวิธีอื่น..."
+               style="display:none;" />
       </div>
-      <div class="col-md-5">
-        <label class="form-label" style="font-size:0.8rem;">วิธีการวัดและประเมินผล</label>
+
+      <!-- วิธีการวัดและประเมินผล -->
+      <div class="col-md-3">
+        <label class="form-label" style="font-size:0.8rem;">
+          <i class="fa fa-clipboard-check me-1" style="color:#7c3aed;"></i>วิธีการวัดและประเมินผล
+        </label>
         <select class="form-select form-select-sm" id="assessment_${id}">
           <option value="">-- เลือก --</option>
           <option>การสอบ (Test)</option>
@@ -2517,40 +2876,100 @@ function addMethodRow(data) {
           <option>ประเมินการสะท้อนคิด</option>
           <option>อื่นๆ</option>
         </select>
-        <input type="text" class="form-control form-control-sm mt-1" id="assessment_custom_${id}" placeholder="ระบุการประเมินอื่น" style="display:none;" />
+        <input type="text" class="form-control form-control-sm mt-1"
+               id="assessment_custom_${id}" placeholder="ระบุวิธีอื่น..."
+               style="display:none;" />
       </div>
+
+      <!-- เครื่องมือวัดและประเมินผล -->
+      <div class="col-md-3">
+        <label class="form-label" style="font-size:0.8rem;">
+          <i class="fa fa-tools me-1" style="color:#0d9488;"></i>เครื่องมือวัดและประเมินผล
+        </label>
+        <select class="form-select form-select-sm" id="tool_${id}">
+          <option value="">-- เลือก --</option>
+          <option>แบบทดสอบ (Test)</option>
+          <option>แบบสอบถาม</option>
+          <option>แบบประเมินชิ้นงาน (Rubric)</option>
+          <option>แบบประเมินรายงาน</option>
+          <option>แบบประเมินการนำเสนอ</option>
+          <option>แบบสังเกตพฤติกรรม</option>
+          <option>แบบประเมินการปฏิบัติ</option>
+          <option>แบบบันทึกการสะท้อนคิด</option>
+          <option>แบบประเมินโครงการ</option>
+          <option>Portfolio</option>
+          <option>แบบทดสอบออนไลน์</option>
+          <option>OSCE</option>
+          <option>อื่นๆ</option>
+        </select>
+        <input type="text" class="form-control form-control-sm mt-1"
+               id="tool_custom_${id}" placeholder="ระบุเครื่องมืออื่น..."
+               style="display:none;" />
+      </div>
+
+      <!-- ร้อยละ *Cr -->
       <div class="col-md-2">
-        <label class="form-label" style="font-size:0.8rem;">ร้อยละ *Cr</label>
-        <input type="number" class="form-control form-control-sm" id="pct_${id}" placeholder="0-100" min="0" max="500" />
+        <label class="form-label" style="font-size:0.8rem;">
+          <i class="fa fa-percent me-1" style="color:var(--accent);"></i>ร้อยละ *Cr
+        </label>
+        <input type="number" class="form-control form-control-sm"
+               id="pct_${id}" placeholder="เช่น 100" min="0" max="999" />
       </div>
+
     </div>`;
   document.getElementById('methodRows').appendChild(div);
 
-  // Listen for "อื่นๆ" selection
-  const teachSel = div.querySelector('#teaching_' + id);
+  // Listen for "อื่นๆ" — teaching
+  const teachSel    = div.querySelector('#teaching_' + id);
   const teachCustom = div.querySelector('#teaching_custom_' + id);
   teachSel.addEventListener('change', () => {
     teachCustom.style.display = teachSel.value === 'อื่นๆ' ? 'block' : 'none';
   });
-  const assessSel = div.querySelector('#assessment_' + id);
+
+  // Listen for "อื่นๆ" — assessment
+  const assessSel    = div.querySelector('#assessment_' + id);
   const assessCustom = div.querySelector('#assessment_custom_' + id);
   assessSel.addEventListener('change', () => {
     assessCustom.style.display = assessSel.value === 'อื่นๆ' ? 'block' : 'none';
   });
 
-  // Prefill if data passed
+  // Listen for "อื่นๆ" — tool
+  const toolSel    = div.querySelector('#tool_' + id);
+  const toolCustom = div.querySelector('#tool_custom_' + id);
+  toolSel.addEventListener('change', () => {
+    toolCustom.style.display = toolSel.value === 'อื่นๆ' ? 'block' : 'none';
+  });
+
+  // Prefill from data
   if (data) {
+    // teaching
     teachSel.value = data.teaching || '';
     if (!teachSel.value && data.teaching) {
-      // Custom value
       const opt = document.createElement('option');
-      opt.value = data.teaching;
-      opt.text = data.teaching;
+      opt.value = opt.text = data.teaching;
       teachSel.appendChild(opt);
       teachSel.value = data.teaching;
     }
+    // assessment
     assessSel.value = data.assessment || '';
-    document.getElementById('pct_' + id).value = data.pct || '';
+    if (!assessSel.value && data.assessment) {
+      const opt = document.createElement('option');
+      opt.value = opt.text = data.assessment;
+      assessSel.appendChild(opt);
+      assessSel.value = data.assessment;
+    }
+    // tool
+    const toolVal = data.tool || '';
+    toolSel.value = toolVal;
+    if (!toolSel.value && toolVal) {
+      const opt = document.createElement('option');
+      opt.value = opt.text = toolVal;
+      toolSel.appendChild(opt);
+      toolSel.value = toolVal;
+    }
+    // pct
+    const pctEl = div.querySelector('#pct_' + id);
+    if (pctEl) pctEl.value = data.pct || '';
   }
 }
 
@@ -2562,16 +2981,26 @@ function removeMethodRow(id) {
 function getMethodRows() {
   const rows = [];
   document.querySelectorAll('.method-row').forEach(row => {
-    const id = row.id.replace('methodRow_', '');
-    const teachSel = document.getElementById('teaching_' + id);
-    const teachCustom = document.getElementById('teaching_custom_' + id);
-    const assessSel = document.getElementById('assessment_' + id);
-    const assessCustom = document.getElementById('assessment_custom_' + id);
-    const pct = document.getElementById('pct_' + id);
-    const teaching = teachSel && teachSel.value === 'อื่นๆ' ? teachCustom.value : (teachSel ? teachSel.value : '');
-    const assessment = assessSel && assessSel.value === 'อื่นๆ' ? assessCustom.value : (assessSel ? assessSel.value : '');
-    if (teaching || assessment) {
-      rows.push({ teaching, assessment, pct: pct ? pct.value : '' });
+    const id         = row.id.replace('methodRow_', '');
+    const teachSel   = document.getElementById('teaching_'        + id);
+    const teachCust  = document.getElementById('teaching_custom_' + id);
+    const assessSel  = document.getElementById('assessment_'      + id);
+    const assessCust = document.getElementById('assessment_custom_'+ id);
+    const toolSel    = document.getElementById('tool_'            + id);
+    const toolCust   = document.getElementById('tool_custom_'     + id);
+    const pctEl      = document.getElementById('pct_'             + id);
+
+    const teaching   = teachSel  && teachSel.value  === 'อื่นๆ' ? (teachCust  ? teachCust.value  : '') : (teachSel  ? teachSel.value  : '');
+    const assessment = assessSel && assessSel.value === 'อื่นๆ' ? (assessCust ? assessCust.value : '') : (assessSel ? assessSel.value : '');
+    const tool       = toolSel   && toolSel.value   === 'อื่นๆ' ? (toolCust   ? toolCust.value   : '') : (toolSel   ? toolSel.value   : '');
+
+    if (teaching || assessment || tool) {
+      rows.push({
+        teaching,
+        assessment,
+        tool,
+        pct: pctEl ? pctEl.value : ''
+      });
     }
   });
   return rows;
@@ -2582,6 +3011,32 @@ function getMethodRows() {
 // ===========================
 function saveSubjectData(e) {
   e.preventDefault();
+
+  // ── ตรวจ % รวม CLO ไม่เกิน ร้อยละ*Cr ──
+  const _target = getCreditTarget();
+  if (_target != null) {
+    let _grand = 0;
+    PLO_LABELS.forEach(plo => {
+      (CLO_MAP[plo] || []).forEach(c => {
+        const cb = document.getElementById('clo_' + plo + '_' + c.id.replace('.','_'));
+        const pctEl = document.getElementById('cpct_' + plo + '_' + c.id.replace('.','_'));
+        if (cb && cb.checked) _grand += parseFloat(pctEl?.value) || 0;
+      });
+    });
+    const _g = Math.round(_grand * 10) / 10;
+    if (_g > _target) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ผลรวม % CLO เกินเป้าหมาย',
+        html: `ผลรวม <strong>${_g}</strong> เกิน ร้อยละ*Cr <strong>${_target}</strong><br>
+               <small class="text-muted">กรุณาปรับลด % ของ CLO ให้รวมไม่เกิน ${_target}</small>`,
+        confirmButtonColor: '#dc2626',
+        confirmButtonText: 'แก้ไข'
+      });
+      return;
+    }
+  }
+
   const editId = document.getElementById('editId').value;
   const payload = {
     id: editId || Date.now().toString(),
@@ -2744,41 +3199,53 @@ function renderAssessment() {
   allSubjects.forEach(s => {
     (s.methods || []).forEach(m => {
       rows.push(`<tr>
-        <td><strong>${s.code || '-'}</strong></td>
-        <td>${s.name || '-'}</td>
-        <td>${m.teaching || '-'}</td>
-        <td>${m.assessment || '-'}</td>
-        <td>${m.pct || '-'}</td>
-        <td>${Object.keys(s.plo_mapping || {}).join(', ') || '-'}</td>
+        <td data-label="รหัส"><strong>${s.code || '-'}</strong></td>
+        <td data-label="ชื่อวิชา">${s.name || '-'}</td>
+        <td data-label="วิธีการสอน">${m.teaching || '-'}</td>
+        <td data-label="วิธีประเมิน">${m.assessment || '-'}</td>
+        <td data-label="เครื่องมือ"><span style="font-size:0.8rem;color:#0d9488;">${m.tool || '-'}</span></td>
+        <td data-label="ร้อยละ"><strong>${m.pct || '-'}</strong></td>
+        <td data-label="PLO">${Object.keys(s.plo_mapping || {}).join(', ') || '-'}</td>
       </tr>`);
     });
   });
-  tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="6" class="text-center py-4 text-muted">ยังไม่มีข้อมูล</td></tr>';
+  tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="7" class="text-center py-4 text-muted">ยังไม่มีข้อมูล</td></tr>';
 }
 
 // ===========================
 // REPORTS
 // ===========================
 function renderReports() {
-  // PLO Summary
+  const empty = '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ยังไม่มีข้อมูล</h5></div>';
+
+  // ── helper: progress bar row ──
+  function barRow(label, count, max, color, extra) {
+    const pct = max > 0 ? Math.round(count/max*100) : 0;
+    return `<div class="mb-2" style="cursor:pointer;" ${extra||''}>
+      <div class="d-flex justify-content-between mb-1">
+        <span style="font-size:0.82rem;">${label}</span>
+        <span class="text-muted" style="font-size:0.78rem;">${count}</span>
+      </div>
+      <div class="progress-bar-custom">
+        <div class="progress-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+    </div>`;
+  }
+
+  // ── PLO Summary ──
   const ploCount = {};
   PLO_LABELS.forEach(p => ploCount[p] = 0);
   allSubjects.forEach(s => {
     Object.keys(s.plo_mapping || {}).forEach(p => { if (ploCount[p] !== undefined) ploCount[p]++; });
   });
   const maxPlo = Math.max(...Object.values(ploCount), 1);
-  document.getElementById('ploSummary').innerHTML = PLO_LABELS.map(p => `
-    <div class="mb-2">
-      <div class="d-flex justify-content-between mb-1">
-        <span class="fw-600" style="font-size:0.85rem;">${p}</span>
-        <span class="text-muted" style="font-size:0.8rem;">${ploCount[p]} วิชา</span>
-      </div>
-      <div class="progress-bar-custom">
-        <div class="progress-fill" style="width:${ploCount[p]/maxPlo*100}%;background:var(--primary-light)"></div>
-      </div>
-    </div>`).join('');
+  document.getElementById('ploSummary').innerHTML =
+    PLO_LABELS.map(p =>
+      barRow(p, ploCount[p], maxPlo, 'var(--primary-light)',
+        `onclick="drillPLODetail('${p}')" title="คลิกดูวิชาที่ Mapping ${p}"`)
+    ).join('') || empty;
 
-  // Method summary
+  // ── Teaching Method Summary ──
   const methodCount = {};
   allSubjects.forEach(s => {
     (s.methods || []).forEach(m => {
@@ -2786,33 +3253,219 @@ function renderReports() {
       methodCount[k] = (methodCount[k] || 0) + 1;
     });
   });
-  const sorted = Object.entries(methodCount).sort((a,b) => b[1]-a[1]).slice(0,8);
-  const maxM = sorted.length > 0 ? sorted[0][1] : 1;
-  document.getElementById('methodSummary').innerHTML = sorted.length > 0 ?
-    sorted.map(([m, c]) => `
-    <div class="mb-2">
-      <div class="d-flex justify-content-between mb-1">
-        <span style="font-size:0.8rem;">${m}</span>
-        <span class="text-muted" style="font-size:0.8rem;">${c}</span>
-      </div>
-      <div class="progress-bar-custom">
-        <div class="progress-fill" style="width:${c/maxM*100}%;background:var(--accent)"></div>
-      </div>
-    </div>`).join('') :
-    '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ยังไม่มีข้อมูล</h5></div>';
+  const sortedM = Object.entries(methodCount).sort((a,b) => b[1]-a[1]).slice(0,8);
+  const maxM = sortedM.length > 0 ? sortedM[0][1] : 1;
+  document.getElementById('methodSummary').innerHTML = sortedM.length > 0
+    ? sortedM.map(([m,c]) => barRow(m, c, maxM, 'var(--accent)')).join('')
+    : empty;
 
-  // Report table
+
+
+  // ── Assessment Method Summary ──
+  const assessCount = {};
+  allSubjects.forEach(s => {
+    (s.methods || []).forEach(m => {
+      const k = (m.assessment || 'ไม่ระบุ').split('(')[0].trim();
+      if (k) assessCount[k] = (assessCount[k] || 0) + 1;
+    });
+  });
+  const sortedA = Object.entries(assessCount).sort((a,b) => b[1]-a[1]).slice(0,8);
+  const maxA = sortedA.length > 0 ? sortedA[0][1] : 1;
+  document.getElementById('assessSummary').innerHTML = sortedA.length > 0
+    ? sortedA.map(([a,c]) => barRow(a, c, maxA, '#7c3aed')).join('')
+    : empty;
+
+  // ── Tool (เครื่องมือวัด) Summary — รวมจาก methods.tool และ cloData.tool ──
+  const toolCount = {};
+  allSubjects.forEach(s => {
+    // จาก method rows
+    (s.methods || []).forEach(m => {
+      if (m.tool) { toolCount[m.tool] = (toolCount[m.tool]||0) + 1; }
+    });
+    // จาก CLO mapping
+    Object.values(s.plo_mapping || {}).forEach(ploVal => {
+      (ploVal.cloData || []).forEach(cd => {
+        if (cd.tool) { toolCount[cd.tool] = (toolCount[cd.tool]||0) + 1; }
+      });
+    });
+  });
+  const sortedT = Object.entries(toolCount).sort((a,b) => b[1]-a[1]).slice(0,12);
+  const maxT = sortedT.length > 0 ? sortedT[0][1] : 1;
+  document.getElementById('toolSummary').innerHTML = sortedT.length > 0
+    ? sortedT.map(([t,c]) => barRow(t, c, maxT, '#0d9488')).join('')
+    : empty;
+
+  // ── Workload Summary ──
+  const wbIn  = allSubjects.filter(s => s.workload_in  === true || s.workload_in  === 'Y').length;
+  const wbOut = allSubjects.filter(s => s.workload_out === true || s.workload_out === 'Y').length;
+  const wbNone= allSubjects.length - Math.max(wbIn, wbOut);
+  const allHours = allSubjects
+    .filter(s => s.workload_hours && parseFloat(s.workload_hours) > 0)
+    .map(s => parseFloat(s.workload_hours));
+  const avgHours = allHours.length > 0
+    ? (allHours.reduce((a,b) => a+b, 0) / allHours.length).toFixed(1)
+    : '-';
+  const totalSubj = allSubjects.length || 1;
+  document.getElementById('workloadSummary').innerHTML = `
+    <div class="mb-3">
+      ${barRow('มีภาระงานในเวลาเรียน', wbIn, totalSubj, '#16a34a')}
+      ${barRow('มีภาระงานนอกเวลาเรียน', wbOut, totalSubj, '#d97706')}
+      ${barRow('ไม่มีภาระงาน', wbNone > 0 ? wbNone : 0, totalSubj, '#94a3b8')}
+    </div>
+    <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:10px 14px;font-size:0.85rem;margin-top:6px;">
+      <i class="fa fa-clock me-1 text-success"></i>
+      เฉลี่ยชั่วโมงนอกเวลาเรียน: <strong>${avgHours} ชม./วิชา</strong>
+      <span class="text-muted" style="font-size:0.78rem;">(${allHours.length} วิชาที่ระบุ)</span>
+    </div>`;
+
+  // ── Report table ──
   const tbody = document.getElementById('reportTbody');
   tbody.innerHTML = allSubjects.map((s, i) => {
     const ploKeys = Object.keys(s.plo_mapping || {});
     const totalPct = (s.methods || []).reduce((sum, m) => sum + parseFloat(m.pct || 0), 0);
-    return `<tr>
-      <td>${i+1}</td><td><strong>${s.code || '-'}</strong></td><td>${s.name || '-'}</td>
-      <td>${s.credits || '-'}</td><td>${s.instructor || '-'}</td>
-      <td>${ploKeys.map(p => `<span class="badge-plo">${p}</span>`).join('') || '-'}</td>
-      <td><strong>${totalPct}</strong></td>
+    return `<tr style="cursor:pointer;" onclick="drillSubjectDetail('${s.id}')" title="คลิกดูรายละเอียด">
+      <td data-label="#">${i+1}</td>
+      <td data-label="รหัส"><strong>${s.code || '-'}</strong></td>
+      <td data-label="ชื่อวิชา">${s.name || '-'} <i class="fa fa-arrow-up-right-from-square ms-1" style="font-size:0.62rem;opacity:0.4;"></i></td>
+      <td data-label="หน่วยกิต">${s.credits || '-'}</td>
+      <td data-label="ผู้รับผิดชอบ">${s.instructor || '-'}</td>
+      <td data-label="PLO">${ploKeys.map(p => `<span class="badge-plo">${p}</span>`).join('') || '-'}</td>
+      <td data-label="รวม%"><strong>${totalPct}</strong></td>
     </tr>`;
   }).join('') || '<tr><td colspan="7" class="text-center py-4 text-muted">ยังไม่มีข้อมูล</td></tr>';
+}
+
+// ── Drill-down จากการ์ด report ──
+function drillReportCard(type) {
+  const empty = '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ยังไม่มีข้อมูล</h5></div>';
+
+  if (type === 'plo') {
+    // PLO detail: แสดงแต่ละ PLO พร้อมรายชื่อวิชา
+    const ploCount = {};
+    PLO_LABELS.forEach(p => ploCount[p] = 0);
+    allSubjects.forEach(s => { Object.keys(s.plo_mapping||{}).forEach(p => { if(ploCount[p]!==undefined) ploCount[p]++; }); });
+    const max = Math.max(...Object.values(ploCount), 1);
+    const colors = ['#1a3a5c','#2563a8','#7c3aed','#0d9488','#16a34a','#d97706','#dc2626','#0891b2','#4338ca','#e8a020'];
+    const html = PLO_LABELS.map((p,i) => {
+      const cnt = ploCount[p];
+      const pct = Math.round(cnt/max*100);
+      return `<div style="margin-bottom:12px;cursor:pointer;padding:10px;border:1.5px solid var(--border);border-radius:10px;transition:all .18s;"
+                   onmouseover="this.style.borderColor='${colors[i]}'" onmouseout="this.style.borderColor='var(--border)'"
+                   onclick="drillPLODetail('${p}')">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span><span class="badge-plo">${p}</span> <span style="font-size:0.82rem;font-weight:600;">${PLO_DESC[i]}</span></span>
+          <span style="font-size:0.78rem;color:var(--text-muted);">${cnt} วิชา <i class="fa fa-chevron-right ms-1" style="font-size:0.65rem;"></i></span>
+        </div>
+        <div class="progress-bar-custom"><div class="progress-fill" style="width:${pct}%;background:${colors[i]};"></div></div>
+      </div>`;
+    }).join('');
+    openDrill('สรุปการ Mapping PLO รวม', PLO_LABELS.length+' PLO', html || empty);
+  }
+  else if (type === 'method') {
+    const methodCount = {};
+    allSubjects.forEach(s => {
+      (s.methods||[]).forEach(m => {
+        const k = (m.teaching||'ไม่ระบุ').split('(')[0].trim();
+        if (!methodCount[k]) methodCount[k] = { count:0, subjects:[] };
+        methodCount[k].count++;
+        if (!methodCount[k].subjects.includes(s.name)) methodCount[k].subjects.push(s.name);
+      });
+    });
+    const sorted = Object.entries(methodCount).sort((a,b)=>b[1].count-a[1].count);
+    const max = sorted.length>0 ? sorted[0][1].count : 1;
+    const html = sorted.map(([m,d]) => `
+      <div style="margin-bottom:10px;padding:10px;background:#fafbff;border-radius:10px;border:1.5px solid var(--border);">
+        <div class="d-flex justify-content-between mb-2">
+          <span style="font-size:0.85rem;font-weight:600;">${m}</span>
+          <span class="badge-plo">${d.count} วิชา</span>
+        </div>
+        <div class="progress-bar-custom mb-2"><div class="progress-fill" style="width:${Math.round(d.count/max*100)}%;background:var(--accent);"></div></div>
+        <div style="font-size:0.72rem;color:var(--text-muted);">${d.subjects.slice(0,3).join(', ')}${d.subjects.length>3?' +อีก '+(d.subjects.length-3)+' วิชา':''}</div>
+      </div>`).join('');
+    openDrill('วิธีการจัดการเรียนรู้ที่ใช้', sorted.length+' วิธี', html || empty);
+  }
+  else if (type === 'assessment') {
+    const assessCount = {};
+    allSubjects.forEach(s => {
+      (s.methods||[]).forEach(m => {
+        const k = (m.assessment||'ไม่ระบุ').split('(')[0].trim();
+        if (!k) return;
+        if (!assessCount[k]) assessCount[k] = { count:0, subjects:[] };
+        assessCount[k].count++;
+        if (!assessCount[k].subjects.includes(s.name)) assessCount[k].subjects.push(s.name);
+      });
+    });
+    const sorted = Object.entries(assessCount).sort((a,b)=>b[1].count-a[1].count);
+    const max = sorted.length>0 ? sorted[0][1].count : 1;
+    const html = sorted.map(([a,d]) => `
+      <div style="margin-bottom:10px;padding:10px;background:#fafbff;border-radius:10px;border:1.5px solid var(--border);">
+        <div class="d-flex justify-content-between mb-2">
+          <span style="font-size:0.85rem;font-weight:600;">${a}</span>
+          <span class="badge-plo" style="background:#ede9fe;color:#7c3aed;">${d.count} วิชา</span>
+        </div>
+        <div class="progress-bar-custom mb-2"><div class="progress-fill" style="width:${Math.round(d.count/max*100)}%;background:#7c3aed;"></div></div>
+        <div style="font-size:0.72rem;color:var(--text-muted);">${d.subjects.slice(0,3).join(', ')}${d.subjects.length>3?' +อีก '+(d.subjects.length-3)+' วิชา':''}</div>
+      </div>`).join('');
+    openDrill('วิธีการวัดและประเมินผล', sorted.length+' วิธี', html || empty);
+  }
+  else if (type === 'tool') {
+    const toolCount = {};
+    allSubjects.forEach(s => {
+      Object.values(s.plo_mapping||{}).forEach(ploVal => {
+        (ploVal.cloData||[]).forEach(cd => {
+          if (!cd.tool) return;
+          if (!toolCount[cd.tool]) toolCount[cd.tool] = { count:0, clos:[], subjects:[] };
+          toolCount[cd.tool].count++;
+          toolCount[cd.tool].clos.push('CLO'+cd.id);
+          if (!toolCount[cd.tool].subjects.includes(s.name)) toolCount[cd.tool].subjects.push(s.name);
+        });
+      });
+    });
+    const sorted = Object.entries(toolCount).sort((a,b)=>b[1].count-a[1].count);
+    const max = sorted.length>0 ? sorted[0][1].count : 1;
+    const html = sorted.map(([t,d]) => `
+      <div style="margin-bottom:10px;padding:10px;background:#f0fdfa;border-radius:10px;border:1.5px solid #99f6e4;">
+        <div class="d-flex justify-content-between mb-2">
+          <span style="font-size:0.85rem;font-weight:600;"><i class="fa fa-tools me-1 text-teal" style="color:#0d9488;"></i>${t}</span>
+          <span class="badge-plo" style="background:#ccfbf1;color:#0d9488;">${d.count} CLO</span>
+        </div>
+        <div class="progress-bar-custom mb-2"><div class="progress-fill" style="width:${Math.round(d.count/max*100)}%;background:#0d9488;"></div></div>
+        <div style="font-size:0.72rem;color:var(--text-muted);">วิชา: ${d.subjects.slice(0,3).join(', ')}${d.subjects.length>3?' +อีก '+(d.subjects.length-3):''}</div>
+      </div>`).join('');
+    openDrill('เครื่องมือวัดและประเมินผล', sorted.length+' เครื่องมือ', html || empty);
+  }
+  else if (type === 'workload') {
+    const wbIn   = allSubjects.filter(s => s.workload_in ===true||s.workload_in ==='Y');
+    const wbOut  = allSubjects.filter(s => s.workload_out===true||s.workload_out==='Y');
+    const wbNone = allSubjects.filter(s => !s.workload_in && !s.workload_out);
+    const html = `
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+        <div style="text-align:center;padding:14px;background:#f0fdf4;border-radius:12px;border:1.5px solid #86efac;">
+          <div style="font-size:1.8rem;font-weight:800;color:#16a34a;">${wbIn.length}</div>
+          <div style="font-size:0.75rem;color:#166534;">ในเวลาเรียน</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:#fffbeb;border-radius:12px;border:1.5px solid #fde68a;">
+          <div style="font-size:1.8rem;font-weight:800;color:#d97706;">${wbOut.length}</div>
+          <div style="font-size:0.75rem;color:#92400e;">นอกเวลาเรียน</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:#f8fafc;border-radius:12px;border:1.5px solid var(--border);">
+          <div style="font-size:1.8rem;font-weight:800;color:var(--text-muted);">${wbNone.length}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">ไม่ระบุ</div>
+        </div>
+      </div>
+      ${wbOut.length > 0 ? `
+      <div style="font-size:0.82rem;font-weight:700;color:var(--primary);margin-bottom:8px;"><i class="fa fa-clock me-1"></i>วิชาที่มีภาระงานนอกเวลา</div>
+      ${wbOut.map(s => `<div class="d-subj-row" onclick="drillSubjectDetail('${s.id}')">
+        <div class="d-subj-icon"><i class="fa fa-book-open"></i></div>
+        <div style="flex:1;">
+          <div class="d-subj-code">${s.code||'-'} | ปี ${s.year||'-'}</div>
+          <div class="d-subj-name">${s.name||'-'}</div>
+          <div class="d-subj-meta">${s.workload_hours?s.workload_hours+' ชม.':''}</div>
+        </div>
+        <div class="d-subj-chev"><i class="fa fa-chevron-right"></i></div>
+      </div>`).join('')}` : ''}`;
+    openDrill('ภาระงานนักศึกษา', allSubjects.length+' รายวิชา', html);
+  }
 }
 
 // ===========================
@@ -3138,6 +3791,8 @@ function autofillSubject(s) {
     buildPLOGrid();
     setPLOData(s.plo_mapping);
   }
+  // recalc เมื่อ autofill เพราะหน่วยกิตอาจเปลี่ยน
+  setTimeout(recalcTotals, 50);
   if (s.workload_in  !== undefined) document.getElementById('wb_in').checked  = !!s.workload_in;
   if (s.workload_out !== undefined) document.getElementById('wb_out').checked = !!s.workload_out;
   if (s.workload_hours) document.getElementById('wb_hours').value = s.workload_hours;
@@ -3366,11 +4021,12 @@ function drillSubjectDetail(id) {
   const methHtml = (s.methods||[]).length ? `
     <div class="table-container">
       <table class="custom-table">
-        <thead><tr><th>#</th><th>วิธีการจัดการเรียนการสอน</th><th>วิธีการประเมิน</th><th>ร้อยละ</th></tr></thead>
+        <thead><tr><th>#</th><th>วิธีการสอน</th><th>วิธีการวัดประเมิน</th><th>เครื่องมือ</th><th>ร้อยละ</th></tr></thead>
         <tbody>${(s.methods||[]).map((m,i)=>`<tr>
           <td>${i+1}</td>
           <td style="font-size:0.82rem;">${m.teaching||'-'}</td>
           <td style="font-size:0.82rem;">${m.assessment||'-'}</td>
+          <td style="font-size:0.82rem;">${m.tool||'-'}</td>
           <td><strong>${m.pct||'-'}</strong></td>
         </tr>`).join('')}</tbody>
       </table>
