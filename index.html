@@ -950,6 +950,59 @@
     /* report table rows */
     #reportTbody tr { cursor: pointer; }
     #reportTbody tr:hover { background: #f0f6ff; }
+
+    /* ===== MKO DASHBOARD CARDS ===== */
+    .mko-dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .mko-dash-card {
+      background: #fff; border-radius: var(--radius);
+      padding: 16px 14px; display: flex; align-items: center; gap: 12px;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      cursor: pointer; transition: all .2s; position: relative;
+    }
+    .mko-dash-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .mko-dash-card::after { content:''; position:absolute; inset:0; border-radius:var(--radius); border:2px solid transparent; transition:border-color .2s; pointer-events:none; }
+    .mko-dash-card:hover::after { border-color: var(--primary-lighter); }
+    .mko-dash-card .card-arrow { position:absolute; top:8px; right:10px; font-size:0.68rem; color:var(--text-muted); opacity:0; transition:opacity .2s; }
+    .mko-dash-card:hover .card-arrow { opacity:1; }
+    .mko-dash-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .mko-dash-icon.teal   { background:#ccfbf1; color:#0d9488; }
+    .mko-dash-icon.green  { background:#dcfce7; color:#16a34a; }
+    .mko-dash-icon.amber  { background:#fef3c7; color:#d97706; }
+    .mko-dash-icon.red    { background:#fee2e2; color:#dc2626; }
+    .mko-dash-icon.blue   { background:#dbeafe; color:#2563eb; }
+    .mko-dash-icon.purple { background:#ede9fe; color:#7c3aed; }
+    .mko-dash-info p  { font-size:0.75rem; color:var(--text-muted); margin:0; }
+    .mko-dash-info h3 { font-size:1.4rem; font-weight:800; font-family:'Kanit',sans-serif; margin:0; line-height:1.1; }
+    .mko-dash-info small { font-size:0.68rem; color:var(--text-muted); }
+
+    /* มคอ. type breakdown row */
+    .mko-type-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+    .mko-type-row:last-child { border-bottom:none; }
+    .mko-type-badge { font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:20px; min-width:58px; text-align:center; flex-shrink:0; }
+    .mko-type-badge.t3 { background:#dbeafe; color:#1e40af; }
+    .mko-type-badge.t4 { background:#ede9fe; color:#5b21b6; }
+    .mko-type-badge.t5 { background:#dcfce7; color:#166534; }
+    .mko-type-badge.t6 { background:#fef3c7; color:#92400e; }
+    .mko-type-bar-wrap { flex:1; }
+    .mko-type-bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+    .mko-type-bar-fill { height:100%; border-radius:4px; transition:width .5s; }
+    .mko-type-count { font-size:0.78rem; font-weight:700; min-width:36px; text-align:right; }
+    .mko-type-ok    { font-size:0.72rem; color:var(--success); min-width:42px; text-align:right; }
+
+    @media(max-width:768px){
+      .mko-dash-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+      .mko-dash-card { padding:12px 10px; gap:8px; }
+      .mko-dash-icon { width:38px; height:38px; font-size:1rem; }
+      .mko-dash-info h3 { font-size:1.2rem; }
+    }
+    @media(max-width:480px){
+      .mko-dash-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
+    }
   </style>
 </head>
 <body>
@@ -1092,6 +1145,57 @@
               <thead><tr><th>รหัส</th><th>ชื่อวิชา</th><th>ผู้รับผิดชอบ</th><th>ชั้นปี</th><th>ภาคเรียน</th><th>%CLO</th></tr></thead>
               <tbody id="recentTbody"><tr><td colspan="6" class="text-center py-4 text-muted">กำลังโหลด...</td></tr></tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MKO SECTION IN DASHBOARD ===== -->
+      <div style="font-family:'Kanit',sans-serif;font-size:1.05rem;font-weight:600;color:var(--primary);margin:24px 0 12px;display:flex;align-items:center;gap:10px;">
+        <i class="fa fa-file-circle-check" style="color:#0d9488;"></i>
+        สรุปการส่ง มคอ.
+        <span style="font-size:0.75rem;font-weight:400;color:var(--text-muted);">• คลิกที่การ์ดเพื่อดูรายละเอียด</span>
+      </div>
+
+      <!-- มคอ. KPI cards -->
+      <div class="mko-dash-grid" id="mkoDashGrid">
+        <div class="mko-dash-card" onclick="drillMkoDash('all')" title="มคอ.ที่ส่งแล้วทั้งหมด">
+          <i class="fa fa-arrow-right card-arrow"></i>
+          <div class="mko-dash-icon teal"><i class="fa fa-file-alt"></i></div>
+          <div class="mko-dash-info"><p>ส่งแล้วทั้งหมด</p><h3 id="dMkoTotal">0</h3><small>ฉบับ • คลิกดูรายการ</small></div>
+        </div>
+        <div class="mko-dash-card" onclick="drillMkoDash('approved')" title="มคอ.ที่อนุมัติแล้ว">
+          <i class="fa fa-arrow-right card-arrow"></i>
+          <div class="mko-dash-icon green"><i class="fa fa-circle-check"></i></div>
+          <div class="mko-dash-info"><p>อนุมัติแล้ว</p><h3 id="dMkoOk">0</h3><small>ฉบับ • คลิกดูรายการ</small></div>
+        </div>
+        <div class="mko-dash-card" onclick="drillMkoDash('wait')" title="มคอ.รอตรวจสอบ">
+          <i class="fa fa-arrow-right card-arrow"></i>
+          <div class="mko-dash-icon amber"><i class="fa fa-clock"></i></div>
+          <div class="mko-dash-info"><p>รอตรวจสอบ</p><h3 id="dMkoWait">0</h3><small>ฉบับ • คลิกดูรายการ</small></div>
+        </div>
+        <div class="mko-dash-card" onclick="drillMkoDash('fix')" title="มคอ.ที่ขอแก้ไข">
+          <i class="fa fa-arrow-right card-arrow"></i>
+          <div class="mko-dash-icon red"><i class="fa fa-circle-exclamation"></i></div>
+          <div class="mko-dash-info"><p>ขอแก้ไข</p><h3 id="dMkoFix">0</h3><small>ฉบับ • คลิกดูรายการ</small></div>
+        </div>
+      </div>
+
+      <!-- มคอ. แยกตามประเภท — 2 columns -->
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <div class="card-box" style="cursor:pointer;" onclick="drillMkoDash('all')" title="คลิกดูรายการ">
+            <div class="card-header-custom" style="background:linear-gradient(90deg,#0f766e,#0d9488);">
+              <i class="fa fa-chart-bar me-2"></i>มคอ. ที่ส่งแล้ว แยกตามประเภท
+            </div>
+            <div class="card-body-custom" id="dashMkoTypeAll"></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="card-box" style="cursor:pointer;" onclick="drillMkoDash('approved')" title="คลิกดูรายการที่อนุมัติ">
+            <div class="card-header-custom" style="background:linear-gradient(90deg,#166534,#16a34a);">
+              <i class="fa fa-circle-check me-2"></i>มคอ. ที่อนุมัติแล้ว แยกตามประเภท
+            </div>
+            <div class="card-body-custom" id="dashMkoTypeOk"></div>
           </div>
         </div>
       </div>
@@ -1616,6 +1720,88 @@
               <button class="btn-accent ms-2" onclick="initDatabase()"><i class="fa fa-database me-2"></i>สร้างฐานข้อมูล</button>
               <button class="btn-success-custom ms-2" onclick="seedToSheets()"><i class="fa fa-seedling me-2"></i>โหลด Seed Data (47 วิชา)</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- YEAR MANAGEMENT CARD -->
+      <div class="card-box">
+        <div class="card-header-custom" style="background:linear-gradient(90deg,#7c3aed,#6d28d9);">
+          <i class="fa fa-calendar-plus me-2"></i>จัดการปีการศึกษา
+        </div>
+        <div class="card-body-custom">
+          <div class="info-banner" style="background:linear-gradient(90deg,#ede9fe,#ddd6fe);color:#5b21b6;margin-bottom:16px;">
+            <i class="fa fa-circle-info fa-lg"></i>
+            <div>ข้อมูลแต่ละปีการศึกษาจะถูกเก็บใน Google Sheets แยก Sheet
+              เช่น <strong>subjects_2569</strong>, <strong>subjects_2570</strong>
+              เมื่อขึ้นปีใหม่ สามารถคัดลอกรายวิชาเดิมมาปรับแก้ได้
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">ปีการศึกษาปัจจุบัน</label>
+              <select class="form-select" id="settingCurrentYear">
+                <option value="2569" selected>2569</option>
+                <option value="2568">2568</option>
+                <option value="2567">2567</option>
+                <option value="2566">2566</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn-primary-custom w-100" onclick="initYearDB()">
+                <i class="fa fa-database me-1"></i>สร้าง Sheet ปีนี้
+              </button>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn-success-custom w-100" onclick="loadYearData()">
+                <i class="fa fa-rotate me-1"></i>โหลดข้อมูลปีนี้
+              </button>
+            </div>
+          </div>
+
+          <hr style="margin:18px 0;" />
+
+          <div style="font-family:'Kanit',sans-serif;font-weight:600;font-size:0.9rem;color:#7c3aed;margin-bottom:12px;">
+            <i class="fa fa-copy me-2"></i>คัดลอกรายวิชาจากปีก่อนมาปีปัจจุบัน
+          </div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">จากปีการศึกษา (ต้นทาง)</label>
+              <select class="form-select" id="copyFromYear">
+                <option value="2568">2568</option>
+                <option value="2567">2567</option>
+                <option value="2566">2566</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">ไปปีการศึกษา (ปลายทาง)</label>
+              <select class="form-select" id="copyToYear">
+                <option value="2569" selected>2569</option>
+                <option value="2568">2568</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn-accent w-100" onclick="copyYearData()">
+                <i class="fa fa-clone me-1"></i>คัดลอกรายวิชา
+              </button>
+            </div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;">
+            <i class="fa fa-circle-info me-1"></i>
+            ระบบจะคัดลอกเฉพาะ <strong>ข้อมูลพื้นฐานรายวิชา</strong> (รหัส ชื่อ หน่วยกิต อาจารย์)
+            ไม่คัดลอกวิธีการสอน, CLO→PLO Mapping — ให้กรอกใหม่ในปีการศึกษาปัจจุบัน
+          </div>
+
+          <hr style="margin:18px 0;" />
+
+          <div style="font-family:'Kanit',sans-serif;font-weight:600;font-size:0.9rem;color:var(--primary);margin-bottom:10px;">
+            <i class="fa fa-table-list me-2"></i>ปีการศึกษาที่มีข้อมูลใน Google Sheets
+          </div>
+          <div id="yearListDisplay" style="font-size:0.85rem;color:var(--text-muted);">
+            <button class="btn-outline-custom" style="padding:6px 14px;font-size:0.82rem;" onclick="fetchAvailableYears()">
+              <i class="fa fa-search me-1"></i>ตรวจสอบปีที่มีข้อมูล
+            </button>
           </div>
         </div>
       </div>
@@ -2264,32 +2450,51 @@ function callGAS(params, callback) {
 // ===========================
 // LOAD ALL DATA
 // ===========================
-function loadAllData(cb) {
+function loadAllData(cb, forceYear) {
+  const acadYear = forceYear || getActiveDashYear() || '2569';
+  const cacheKey = 'tms_subjects_' + acadYear;
+
   // Try localStorage cache first
-  const cached = localStorage.getItem('tms_subjects');
+  const cached = localStorage.getItem(cacheKey);
   if (cached) {
     try { allSubjects = JSON.parse(cached); } catch(e) { allSubjects = []; }
   }
 
-  callGAS({action: 'getAllSubjects'}, function(err, data) {
+  callGAS({ action: 'getAllSubjects', acadyear: acadYear }, function(err, data) {
     if (!err && data && data.success) {
       const remote = data.subjects || [];
       if (remote.length > 0) {
         allSubjects = remote;
       } else {
-        // No data in Sheet yet — use seed data
-        allSubjects = allSubjects.length > 0 ? allSubjects : [...SEED_SUBJECTS];
+        // ไม่มีข้อมูลใน Sheets — ใช้ cache หรือ SEED
+        allSubjects = allSubjects.length > 0 ? allSubjects
+          : SEED_SUBJECTS.filter(s => !s.acadyear || s.acadyear === acadYear);
       }
-      localStorage.setItem('tms_subjects', JSON.stringify(allSubjects));
+      localStorage.setItem(cacheKey, JSON.stringify(allSubjects));
       setStatus(true);
     } else {
-      // Offline: use cache or seed
-      if (allSubjects.length === 0) allSubjects = [...SEED_SUBJECTS];
+      if (allSubjects.length === 0)
+        allSubjects = SEED_SUBJECTS.filter(s => !s.acadyear || s.acadyear === acadYear);
       setStatus(false);
     }
     if (cb) cb();
     renderDashboard();
     renderSubjectsTable();
+    // โหลด มคอ. ด้วยเสมอ (ไม่แยกตามปี)
+    loadMkoBg();
+  });
+}
+
+function loadMkoBg() {
+  const cached = localStorage.getItem('tms_mko');
+  if (cached) { try { allMko = JSON.parse(cached); } catch(e) { allMko = []; } }
+  callGAS({ action: 'getAllMko' }, function(err, res) {
+    if (!err && res && res.success) {
+      allMko = res.mko || [];
+      localStorage.setItem('tms_mko', JSON.stringify(allMko));
+    }
+    // re-render มคอ. ส่วนใน dashboard
+    renderDashMko();
   });
 }
 
@@ -2305,6 +2510,15 @@ function setStatus(online) {
 // ===========================
 function renderDashboard() {
   const acadYear = getActiveDashYear();
+
+  // ถ้า allSubjects เป็นของปีอื่น → โหลดใหม่
+  const currentYr = allSubjects.length > 0
+    ? (allSubjects[0].acadyear || '') : '';
+  if (acadYear && currentYr && currentYr !== acadYear) {
+    loadAllData(null, acadYear);
+    return;
+  }
+
   // normalize + filter by acadyear
   const base = filterByAcadYear(
     allSubjects.map(s => ({ ...s, semester: normSem(s.semester) })),
@@ -2384,6 +2598,177 @@ function renderDashboard() {
       </tr>`;
     }).join('');
   }
+
+  // ── มคอ. section ──
+  renderDashMko();
+}
+
+/* ─────────────────────────────────────────
+   renderDashMko — แสดง KPI + แยกประเภท มคอ.
+   ───────────────────────────────────────── */
+function renderDashMko() {
+  const MKO_TYPES = ['มคอ.3','มคอ.4','มคอ.5','มคอ.6'];
+  const MKO_COLORS = {
+    'มคอ.3': { bar:'#2563eb', badge:'t3' },
+    'มคอ.4': { bar:'#7c3aed', badge:'t4' },
+    'มคอ.5': { bar:'#16a34a', badge:'t5' },
+    'มคอ.6': { bar:'#d97706', badge:'t6' },
+  };
+
+  const total  = allMko.length;
+  const ok     = allMko.filter(m => m.status === 'อนุมัติ').length;
+  const wait   = allMko.filter(m => m.status === 'รอตรวจสอบ').length;
+  const fix    = allMko.filter(m => m.status === 'แก้ไข').length;
+
+  // KPI numbers
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('dMkoTotal', total);
+  set('dMkoOk',    ok);
+  set('dMkoWait',  wait);
+  set('dMkoFix',   fix);
+
+  // สร้าง type row
+  function typeRows(filterFn, emptyMsg) {
+    const filtered = allMko.filter(filterFn);
+    if (!filtered.length) return `<div class="empty-state" style="padding:24px 0;"><i class="fa fa-inbox"></i><h5 class="mt-2" style="font-size:0.875rem;">${emptyMsg}</h5></div>`;
+    const counts = {};
+    MKO_TYPES.forEach(t => counts[t] = filtered.filter(m => m.type === t).length);
+    const maxC = Math.max(...Object.values(counts), 1);
+    return MKO_TYPES.map(t => {
+      const c   = counts[t];
+      const col = MKO_COLORS[t];
+      const pct = Math.round(c / maxC * 100);
+      return `<div class="mko-type-row">
+        <span class="mko-type-badge ${col.badge}">${t}</span>
+        <div class="mko-type-bar-wrap">
+          <div class="mko-type-bar">
+            <div class="mko-type-bar-fill" style="width:${pct}%;background:${col.bar};"></div>
+          </div>
+        </div>
+        <span class="mko-type-count" style="color:${col.bar};">${c}</span>
+        <span class="mko-type-ok">ฉบับ</span>
+      </div>`;
+    }).join('');
+  }
+
+  // กราฟแยกประเภท — ส่งแล้วทั้งหมด
+  const allEl = document.getElementById('dashMkoTypeAll');
+  if (allEl) allEl.innerHTML = typeRows(() => true, 'ยังไม่มีการส่ง มคอ.');
+
+  // กราฟแยกประเภท — อนุมัติแล้ว
+  const okEl = document.getElementById('dashMkoTypeOk');
+  if (okEl) okEl.innerHTML = typeRows(m => m.status === 'อนุมัติ', 'ยังไม่มี มคอ. ที่อนุมัติ');
+}
+
+/* ─────────────────────────────────────────
+   drillMkoDash — drill-down modal มคอ.
+   ───────────────────────────────────────── */
+function drillMkoDash(filter) {
+  const MKO_TYPES = ['มคอ.3','มคอ.4','มคอ.5','มคอ.6'];
+  let list, title, sub;
+
+  if (filter === 'all') {
+    list  = [...allMko].sort((a,b) => (b.submitted_at||'').localeCompare(a.submitted_at||''));
+    title = 'มคอ. ที่ส่งแล้วทั้งหมด';
+    sub   = list.length + ' ฉบับ';
+  } else if (filter === 'approved') {
+    list  = allMko.filter(m => m.status === 'อนุมัติ')
+                   .sort((a,b) => (b.submitted_at||'').localeCompare(a.submitted_at||''));
+    title = 'มคอ. ที่อนุมัติแล้ว';
+    sub   = list.length + ' ฉบับ';
+  } else if (filter === 'wait') {
+    list  = allMko.filter(m => m.status === 'รอตรวจสอบ');
+    title = 'มคอ. รอตรวจสอบ';
+    sub   = list.length + ' ฉบับ';
+  } else if (filter === 'fix') {
+    list  = allMko.filter(m => m.status === 'แก้ไข');
+    title = 'มคอ. ที่ขอแก้ไข';
+    sub   = list.length + ' ฉบับ';
+  } else if (filter.startsWith('type:')) {
+    const t = filter.replace('type:','');
+    list  = allMko.filter(m => m.type === t);
+    title = 'มคอ. ประเภท ' + t;
+    sub   = list.length + ' ฉบับ';
+  }
+
+  if (!list || !list.length) {
+    openDrill(title || 'มคอ.', '0 ฉบับ',
+      '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ยังไม่มีข้อมูล</h5></div>');
+    return;
+  }
+
+  // Tab แยกประเภท
+  const tabCounts = {};
+  MKO_TYPES.forEach(t => tabCounts[t] = list.filter(m => m.type === t).length);
+
+  const tabsHtml = `
+    <div class="custom-tabs mb-3" id="drillMkoTabs">
+      <button class="tab-btn active" onclick="filterDrillMko(this,'all')">
+        ทั้งหมด (${list.length})
+      </button>
+      ${MKO_TYPES.map(t => `
+        <button class="tab-btn" onclick="filterDrillMko(this,'${t}')">
+          ${t} (${tabCounts[t]})
+        </button>`).join('')}
+    </div>`;
+
+  function mkoRow(m) {
+    const badge = m.status==='อนุมัติ'
+      ? '<span class="st-ok"><i class="fa fa-check me-1"></i>อนุมัติ</span>'
+      : m.status==='แก้ไข'
+      ? '<span class="st-fix"><i class="fa fa-exclamation me-1"></i>แก้ไข</span>'
+      : '<span class="st-wait"><i class="fa fa-clock me-1"></i>รอตรวจสอบ</span>';
+
+    return `<div class="d-subj-row" style="align-items:flex-start;"
+                 onclick="showMkoDetail('${m.id}')">
+      <div class="d-subj-icon" style="background:#ccfbf1;color:#0d9488;">
+        <i class="fa fa-file-alt"></i>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+          <span class="mko-type" style="font-size:0.72rem;">${m.type||'-'}</span>
+          ${badge}
+        </div>
+        <div class="d-subj-name">${m.name||'-'}</div>
+        <div class="d-subj-meta">
+          <i class="fa fa-hashtag me-1"></i>${m.code||'-'} &nbsp;|&nbsp;
+          <i class="fa fa-user me-1"></i>${m.instructor||'-'} &nbsp;|&nbsp;
+          <i class="fa fa-calendar me-1"></i>ภาค ${m.semester||'-'}/${m.year||'-'}
+          ${m.submitted_at ? ' &nbsp;|&nbsp; <i class="fa fa-clock me-1"></i>' + m.submitted_at.split('T')[0] : ''}
+        </div>
+        ${m.fileUrl ? `<a href="${m.fileUrl}" target="_blank"
+           class="btn-sm-action btn-view-file" style="margin-top:4px;display:inline-flex;align-items:center;gap:4px;"
+           onclick="event.stopPropagation()">
+           <i class="fa fa-file-pdf"></i> ดูไฟล์
+         </a>` : ''}
+      </div>
+      <div class="d-subj-chev"><i class="fa fa-chevron-right"></i></div>
+    </div>`;
+  }
+
+  const allRows = list.map(mkoRow).join('');
+  const body = tabsHtml + `<div id="drillMkoList">${allRows}</div>`;
+  const _list = list; // capture for filter fn
+
+  // store list for filtering
+  window._drillMkoList = list;
+  window._drillMkoRowFn = mkoRow;
+
+  openDrill(title, sub, body);
+}
+
+function filterDrillMko(btn, type) {
+  // update active tab
+  document.querySelectorAll('#drillMkoTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // filter list
+  const list = type === 'all'
+    ? window._drillMkoList
+    : (window._drillMkoList || []).filter(m => m.type === type);
+  const el = document.getElementById('drillMkoList');
+  if (el) el.innerHTML = list.length
+    ? list.map(window._drillMkoRowFn).join('')
+    : '<div class="empty-state"><i class="fa fa-inbox"></i><h5 class="mt-2">ไม่มีข้อมูล</h5></div>';
 }
 
 // ===========================
@@ -5227,6 +5612,108 @@ function showMkoDetail(id) {
     <button class="btn-accent" style="padding:7px 18px;font-size:0.85rem;" onclick="editMko('${m.id}');closeDrill();"><i class="fa fa-pen me-1"></i>แก้ไข</button>
   `;
   openDrill((m.type||'มคอ.') + ' — ' + (m.name||m.code), 'ผู้สอน: ' + (m.instructor||'-'), html, foot);
+}
+
+
+// ===========================
+// YEAR MANAGEMENT
+// ===========================
+
+function initYearDB() {
+  const yr = document.getElementById('settingCurrentYear')?.value || '2569';
+  Swal.fire({ title: 'สร้าง Sheet ปีการศึกษา ' + yr + '...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+  callGAS({ action: 'initDB', acadyear: yr }, function(err, res) {
+    if (!err && res && res.success) {
+      Swal.fire({ icon: 'success', title: 'สร้างสำเร็จ!', text: res.message, confirmButtonColor: '#1a3a5c' });
+    } else {
+      Swal.fire({ icon: 'warning', title: 'มีข้อผิดพลาด', text: 'ตรวจสอบสิทธิ์ใน Google Sheet', confirmButtonColor: '#1a3a5c' });
+    }
+  });
+}
+
+function loadYearData() {
+  const yr = document.getElementById('settingCurrentYear')?.value || '2569';
+  // อัปเดต year selector ใน dashboard ด้วย
+  const dashSel = document.getElementById('dashAcadYear');
+  if (dashSel) { dashSel.value = yr; }
+  const subjSel = document.getElementById('subjAcadYear');
+  if (subjSel) { subjSel.value = yr; }
+
+  Swal.fire({ title: 'กำลังโหลดข้อมูลปีการศึกษา ' + yr + '...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+  loadAllData(function() {
+    Swal.fire({ icon: 'success', title: 'โหลดสำเร็จ!', text: 'โหลดข้อมูลปีการศึกษา ' + yr + ' แล้ว (' + allSubjects.length + ' วิชา)', confirmButtonColor: '#1a3a5c', timer: 2000, timerProgressBar: true });
+    renderDashboard();
+    renderSubjectsTable();
+  }, yr);
+}
+
+function copyYearData() {
+  const fromY = document.getElementById('copyFromYear')?.value;
+  const toY   = document.getElementById('copyToYear')?.value;
+  if (!fromY || !toY) return;
+  if (fromY === toY) {
+    Swal.fire({ icon: 'warning', title: 'ปีต้นทางและปลายทางเหมือนกัน', confirmButtonColor: '#1a3a5c' });
+    return;
+  }
+  Swal.fire({
+    title: 'ยืนยันการคัดลอก?',
+    html: `คัดลอกรายวิชาจากปี <strong>${fromY}</strong> ไปปี <strong>${toY}</strong><br>
+           <small class="text-muted">จะข้ามวิชาที่มีอยู่แล้วในปีปลายทาง</small>`,
+    icon: 'question', showCancelButton: true,
+    confirmButtonColor: '#e8a020', cancelButtonText: 'ยกเลิก',
+    confirmButtonText: '<i class="fa fa-clone me-1"></i>คัดลอก'
+  }).then(r => {
+    if (!r.isConfirmed) return;
+    Swal.fire({ title: 'กำลังคัดลอก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    callGAS({ action: 'copyYearData', fromYear: fromY, toYear: toY }, function(err, res) {
+      if (!err && res && res.success) {
+        Swal.fire({
+          icon: 'success', title: 'คัดลอกสำเร็จ!',
+          html: `คัดลอก <strong>${res.copied} วิชา</strong> จากปี ${fromY} ไปปี ${toY}<br>
+                 <small class="text-muted">กรุณาเปิดปีการศึกษา ${toY} แล้วกรอกข้อมูลวิธีการสอนและ CLO→PLO ใหม่</small>`,
+          confirmButtonColor: '#1a3a5c'
+        }).then(() => {
+          // โหลดข้อมูลปีปลายทางอัตโนมัติ
+          const dashSel = document.getElementById('dashAcadYear');
+          if (dashSel) dashSel.value = toY;
+          loadAllData(null, toY);
+        });
+      } else {
+        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: res?.error || 'ไม่สามารถคัดลอกได้', confirmButtonColor: '#1a3a5c' });
+      }
+    });
+  });
+}
+
+function fetchAvailableYears() {
+  const el = document.getElementById('yearListDisplay');
+  if (el) el.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>กำลังตรวจสอบ...';
+  callGAS({ action: 'getYears' }, function(err, res) {
+    if (!err && res && res.success) {
+      const years = res.years || [];
+      if (el) el.innerHTML = years.length
+        ? years.map(y => `
+            <span class="badge-year" style="cursor:pointer;margin:3px;padding:5px 12px;font-size:0.82rem;"
+                  onclick="quickSwitchYear('${y}')" title="คลิกเพื่อโหลดข้อมูลปีนี้">
+              📅 ${y}
+            </span>`).join('')
+        : '<span class="text-muted">ยังไม่พบข้อมูลใน Google Sheets</span>';
+    } else {
+      if (el) el.innerHTML = '<span class="text-warning">ไม่สามารถเชื่อมต่อได้</span>';
+    }
+  });
+}
+
+function quickSwitchYear(yr) {
+  const dashSel = document.getElementById('dashAcadYear');
+  const subjSel = document.getElementById('subjAcadYear');
+  if (dashSel) dashSel.value = yr;
+  if (subjSel) subjSel.value = yr;
+  Swal.fire({ title: 'กำลังโหลดปี ' + yr, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+  loadAllData(function() {
+    Swal.fire({ icon: 'success', title: 'โหลดปี ' + yr + ' สำเร็จ', text: allSubjects.length + ' รายวิชา', timer: 1500, showConfirmButton: false });
+    renderDashboard(); renderSubjectsTable();
+  }, yr);
 }
 
 // ===========================
